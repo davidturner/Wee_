@@ -1,0 +1,4 @@
+#container{margin:0 auto;width:960px;}
+header,footer{display:block;float:none;margin:0 10px;width:940px;}
+#content{display:inline;float:right;margin:0 10px;width:300px;}
+aside{display:inline;float:left;margin:0 10px;width:940px;}

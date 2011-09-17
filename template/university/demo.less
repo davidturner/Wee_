@@ -1,0 +1,31 @@
+@def_grid:12; // Defining a Variable
+@width:960px; // Defining a Variable  
+
+// Let's try out a function for a container shall we?
+.container(){
+  margin:0 auto;
+  width:@width;
+}
+
+// And here we have a function for creating grid elements
+// We also have to pass some specific numbers to this mixin
+// with some additional, optional, variables that are pre-defined
+.grid(@grid:@def_grid,@cols:'',@float:left,@display:inline){  
+  display:@display;
+  float:@float;
+  margin:0 10px;
+  width:(@width/@grid * @cols)-20;   
+}
+
+#container{
+  .container();
+}              
+header, footer{
+  .grid(16,16,none,block);
+}                                     
+#content{
+  .grid(@def_grid,4,right);
+}                          
+aside{
+  .grid(@def_grid,12);
+}

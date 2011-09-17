@@ -1,0 +1,179 @@
+/* Headings
+-------------------------------------------------------------- */
+
+h1,h2,h3,h4,h5,h6{
+  font-family:@titleText;
+  font-weight: 700;
+  margin: 0.5em 0;
+  small {
+    font-size: 50%;
+    color: @small;
+  }
+  &+p, &+time+p, &+img+p, &+img, &+ul, &+ol, &+time{
+    margin-top: 0.5em;
+  }
+  &+time{
+    display: block;
+  }
+}
+h1 {
+  font-size: 1.4em;
+}
+h2 {
+  font-size: 1.3em;
+}
+h3 {
+  font-size: 1.2em;
+}
+h4 {
+  font-size: 1.1em;
+}
+h5 {
+  font-size: 1em;
+}
+h6 {
+  font-size: 1em;
+}
+
+h1 img, h2 img, h3 img,
+h4 img, h5 img, h6 img {
+  margin: 0;
+}
+
+
+/* Text elements
+-------------------------------------------------------------- */
+
+time{
+  margin: 0.5em 0;
+}
+p{
+  margin: 1.5em 0;
+}
+p img.left {
+  float: left;
+  margin: 1.5em 1.5em 1.5em 0;
+  padding: 0;
+}
+p img.right {
+  float: right;
+  margin: 1.5em 0 1.5em 1.5em;
+}
+
+blockquote {
+  border-left: 2px solid @background - #444;
+  margin: 1.5em;
+  padding-left: 1em;
+  font-style: italic;
+  margin-left: -1.1em;
+  &.pullquote{
+    width: 46%;
+    padding: 0.5em 2%;
+    float: right;
+    margin:-0.6em 0 0.5em 0.5em;
+    text-align: center;
+    border-left: 0;
+    border-top:2px solid @background - #444;
+    border-bottom: 2px solid @background - #444;
+  }
+  p:first-of-type{
+    margin-top: 0;
+  }
+  p:last-of-type{
+    margin-bottom: 0;
+  }
+}
+strong {
+  font-weight: 700;
+}
+em,dfn {
+  font-style: italic;
+}
+dfn {
+  font-weight: 700;
+}
+sup, sub {
+  line-height: 0;
+}
+sup {
+  vertical-align: super;
+}
+sub {
+  vertical-align: sub;
+}
+
+abbr,
+acronym {
+  border-bottom: 1px dotted;
+}
+address {
+  margin: 0 0 1.5em;
+  font-style: italic;
+}
+del {
+}
+
+pre, img {
+  white-space: pre;
+  overflow-x: scroll;
+  padding: 1% 1%;
+  margin: 1.5em -1%;
+  background: @background - #111;
+  outline: 1px solid @background - #222;
+}
+pre,code,tt {
+  font: 0.8em @codeText;
+  line-height: 1.5;
+}
+
+/* Lists
+-------------------------------------------------------------- */
+
+li ul,
+li ol {
+  margin: 0;
+}
+ul, ol {
+  margin: 0 0 1.5em 0;
+}
+
+ul {
+  list-style-type: square;
+}
+ol {
+  list-style-type: decimal;
+}
+
+dl {
+  margin: 0 0 1.5em 0;
+}
+dl dt {
+  font-weight: 700;
+}
+dd {
+  margin-left: 1.5em;
+}
+
+
+/* Tables
+-------------------------------------------------------------- */
+
+table {
+  margin-bottom: 1.4em;
+  width: 100%;
+}
+th {
+  font-weight: 700;
+}
+thead th {
+}
+th,td,caption {
+  padding: 4px 10px 4px 5px;
+}
+tr.even td {
+}
+tfoot {
+  font-style: italic;
+}
+caption {
+}

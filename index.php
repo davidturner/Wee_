@@ -2,10 +2,10 @@
 ob_start("ob_gzhandler"); // Cheap and cheery gzip compression
 $content = '';
 include_once "config.php"; // User Settings
-include_once "-resources/markdown.php"; // Markdown converts markdown format to the HTMLs
-include_once "-resources/Akismet.class.php";
-include_once "-resources/markdownify.php";
-include_once "-resources/markdownify_extra.php";
+include_once "resources/markdown.php"; // Markdown converts markdown format to the HTMLs
+include_once "resources/Akismet.class.php";
+include_once "resources/markdownify.php";
+include_once "resources/markdownify_extra.php";
 
 $md = new Markdownify_Extra;
 
@@ -258,7 +258,7 @@ if(isset($bits[2]) && $bits[2] != "" && $bits[2] != "page" && $bits[3] == "" && 
     exit;
   }
 }else{
-  include('-template/'.theme.'/header.php'); // Get's the relevant template header file
+  include('template/'.theme.'/header.php'); // Get's the relevant template header file
   
   # If in a single post, it is possible to define files to be included before and after the main content.
   if(isset($bits[2]) && $bits[2] != "" && $bits[2] != "page" && $bits[3] == "" && file_exists("categories/".$bits[1]."/".$bits[2]."/include-before.php")){
@@ -287,8 +287,8 @@ if(isset($bits[2]) && $bits[2] != "" && $bits[2] != "page" && $bits[3] == "" && 
   }
   
   # If the thee has a comments.php in it the theme in use, then we actually make stuff happen for allowing comments, and the parsing of comments.
-  if (!in_array($bits[1], explode(",",nocomments)) && isset($bits[2]) && $bits[2] != "" && $bits[2] != "page" && file_exists('-template/'.theme.'/comments.php')) {
-    include('-template/'.theme.'/comments.php');
+  if (!in_array($bits[1], explode(",",nocomments)) && isset($bits[2]) && $bits[2] != "" && $bits[2] != "page" && file_exists('template/'.theme.'/comments.php')) {
+    include('template/'.theme.'/comments.php');
   }
   if(isset($bits[2]) && $bits[2] != "" && $bits[2] != "page" && $bits[3] == "" && file_exists("categories/".$bits[1]."/".$bits[2]."/include-after.php")){
     include "categories/".$bits[1]."/".$bits[2]."/include-after.php";
@@ -296,7 +296,7 @@ if(isset($bits[2]) && $bits[2] != "" && $bits[2] != "page" && $bits[3] == "" && 
   if(file_exists("categories/pages/".$bits[1]."/include-after.php") && !isset($bits[2]) || file_exists("categories/pages/".$bits[1]."/include-after.php") && $bits[2] == ""){
     include "categories/pages/".$bits[1]."/include-after.php";
   }
-  include('-template/'.theme.'/footer.php');
+  include('template/'.theme.'/footer.php');
 }
 if($cache){
   $fp = fopen($cachefile, 'w');

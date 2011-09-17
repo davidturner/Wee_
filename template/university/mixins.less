@@ -1,0 +1,139 @@
+.borderRadius(@radius: 2px) {
+  -khtml-border-radius: @radius;
+  -moz-border-radius: @radius;
+  -ms-border-radius: @radius;
+  -o-border-radius: @radius;
+  -webkit-border-radius: @radius;
+  border-radius: @radius;
+}    
+
+.borderRadiusAll(@tl:3px,@tr:3px,@br:3px,@bl:3px){ 
+	-moz-border-radius-topleft:@tl;
+	-moz-border-radius-topright:@tr;
+  -moz-border-radius-bottomright:@br;
+  -moz-border-radius-bottomleft:@bl;
+	-webkit-border-top-left-radius:@tl;
+	-webkit-border-top-right-radius:@tr;
+	-webkit-border-bottom-right-radius:@br;
+	-webkit-border-bottom-left-radius:@bl;   
+  border-top-left-radius:@tl;       
+  border-top-right-radius:@tr; 
+  border-bottom-right-radius:@br;     
+  border-bottom-left-radius:@bl; 
+}
+
+.transitions(@color: #8080ff, @time: 0.2s){
+  -o-transition-property: @color;
+  -webkit-transition-property: @color;
+  -moz-transition-property: @color;
+  transition-property: @color;
+  -o-transition-duration: @time;
+  -webkit-transition-duration: @time;
+  -moz-transition-duration: @time;
+  transition-duration: @time;
+}      
+
+.hoverTransition(@type:all,@method:linear,@time:100ms){                 
+  -moz-transition:@type @method @time;
+  -ms-transition:@type @method @time; 
+  -o-transition:@type @method @time;
+  -webkit-transition:@type @method @time; 
+  transition:@type @method @time;
+}
+
+.boxShadow(@offset:0 1px 0,@box:#444) {
+  -moz-box-shadow:@offset @box;
+  -ms-box-shadow:@offset @box;
+  -o-box-shadow:@offset @box;
+  -webkit-box-shadow:@offset @box;
+  box-shadow:@offset @box;
+}
+
+.boxShadowInset(@offset:0 1px 0,@box:#444) {
+  -moz-box-shadow:inset @offset @box;
+  -ms-box-shadow:inset @offset @box;
+  -o-box-shadow:inset @offset @box;
+  -webkit-box-shadow:inset @offset @box;
+  box-shadow:inset @offset @box;
+}
+
+.textShadow(@box:#444,@offset:0 1px 0) {
+  text-shadow:@offset @box;
+}   
+
+.columns(@col:2,@gap:20px,@break:avoid){
+  -moz-column-count: @col;
+  -moz-column-gap: @gap;
+  -moz-column-break-inside: @break;      
+  -webkit-column-count: @col;
+  -webkit-column-gap: @gap;
+  -webkit-column-break-inside:@break;
+  column-count: @col;
+  column-gap: @gap;
+  column-break-inside: @break; 
+}                                
+
+.columnSpan(@span:all){      
+  -moz-column-span: @span;
+  -webkit-column-span: @span;
+  column-span: @span;    
+}
+
+.background(@hex:#222,@rgba:@rgba){
+  background:@hex;
+  background:@rgba;
+}
+
+.rotate(@deg) {
+  -o-transform: rotate(@deg);
+  -moz-transform: rotate(@deg);
+  -khtml-transform: rotate(@deg);
+  -webkit-transform: rotate(@deg);
+  transform:rotate(@deg);
+}
+
+.verticalGradient(@top: #FFF, @bottom: #000){
+	@gap: ((@bottom - @top) + (@top - @bottom));
+	@base: @bottom - (@bottom - @top);   
+
+  background-color: @gap / 2 + @base;
+  background-image: -moz-linear-gradient(top, @top, @bottom);
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, @top),color-stop(1, @bottom));  
+}     
+
+.callToAction(@top: #FFF, @bottom: #000, @padding:10px, @color:#000, @shadow:#fff){
+	@gap: ((@bottom - @top) + (@top - @bottom));
+	@base: @bottom - (@bottom - @top);   
+
+  background: (@gap / 2 + @base) url(-img/overlay.png) top left repeat-x;
+  background-image: -moz-linear-gradient(top, @top, @bottom);
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, @top),color-stop(1, @bottom));
+  border:2px solid (@top+#111)!important;
+	color:@color;
+	padding:@padding; 
+	text-align:center;
+	width:160px;  
+	                 
+	-webkit-background-clip: padding-box;
+	.borderRadius(10px);
+	.textShadow(@shadow);
+	.boxShadow(0 3px 5px,rgba(0,0,0,.4)); 
+	&:hover{
+		color:@color+#333;
+	}    
+	&:active{
+		position:relative;
+		top:3px;
+
+		.boxShadowInset(0 3px 5px,rgba(0,0,0,.4));
+	}
+}
+  
+.horizontalGradient(@left: #FFF, @right: #000) {
+	@gap: ((@right - @left) + (@left - @right));
+	@base: @right - (@right - @left);  
+                       
+	background-color: @gap / 2 + @base;
+	background-image: -moz-linear-gradient(left, @left, @right);
+	background-image: -webkit-gradient(linear,left top,right top,color-stop(0, @left),color-stop(1, @right));                 
+}
