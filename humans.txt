@@ -1,0 +1,22 @@
+/* TEAM */
+
+Developer: David Turner.
+Site: http://davidturner.name
+Twitter: @HerrWulf
+Location: Greenisland, Northern Ireland
+
+/* THANKS */
+
+Tester: Simon Fraser
+Site: http://simonf.co.uk
+Twitter: @symatree
+
+Tester: Chris Grant
+Site: http://duckbox.net
+Twitter: @duckbox
+
+/* SITE */
+
+Standards: HTML5, CSS3
+Components: Modernizr, jQuery
+Software: Espresso, Transmit
