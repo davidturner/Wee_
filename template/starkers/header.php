@@ -18,7 +18,7 @@
   <?php if(file_exists($_SERVER['DOCUMENT_ROOT'].str_replace($bits[1],"categories/".$bits[1],$path)."single.css")){ ?>
   <link rel="stylesheet" media="screen" href="css/single.css" />
   <?php } else { ?>
-  <link rel="stylesheet" href="/-template/<?php echo theme; ?>/css/style.css">
+  <link rel="stylesheet" href="/template/<?php echo theme; ?>/css/style.css">
   <?php } ?>
   
   <?php if(file_exists($_SERVER['DOCUMENT_ROOT'].str_replace($bits[1],"categories/".$bits[1],$path)."extra.css")){ ?>

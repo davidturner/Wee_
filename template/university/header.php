@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title><?php if(defined('noindex') && @$bits[2]=='' || @$bits[2] =='page'){ echo $bits[1]; }else{echo title;} ?><?php echo Divider.SiteName; ?></title>
-  <link rel="stylesheet" media="all" href="<?php echo url; ?>/-template/<?php echo theme; ?>/style.live.css" />
+  <link rel="stylesheet" media="all" href="<?php echo url; ?>/template/<?php echo theme; ?>/style.live.css" />
   <link rel="alternate" type="application/rss+xml" href="<?php echo url; ?>/feed/<?php if($cat){echo $bits[1].'/';} ?>" />
   <link rel="author" href="/humans.txt" />
   <?php if(!defined('noindex')){ ?><meta name="description" content="<?php echo description; ?>" />

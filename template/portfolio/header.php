@@ -27,9 +27,9 @@ if(url == 'http://uni.david.turner.name'){
   <?php
   } else {
   ?>  
-  <!--[if lte IE 8]><link rel="stylesheet" media="all" href="/-template/<?=theme;?>/css/site.classic.css" /><![endif]--> 
+  <!--[if lte IE 8]><link rel="stylesheet" media="all" href="/template/<?=theme;?>/css/site.classic.css" /><![endif]--> 
   <!--[if lt IE 8]><style>#content{width: 70%!important;}</style><![endif]--> 
-  <!--[if gt IE 8]><!--><link rel="stylesheet" media="all" href="/-template/<?php echo theme; ?>/css/site.current.css" /><!--<![endif]--> 
+  <!--[if gt IE 8]><!--><link rel="stylesheet" media="all" href="/template/<?php echo theme; ?>/css/site.current.css" /><!--<![endif]--> 
   <?php
   }
   ?>
