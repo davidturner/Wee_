@@ -21,7 +21,7 @@ if(cache){
 <?php
 $path = str_replace(array("/feed/","/feed"), '', $_SERVER['REQUEST_URI']);
 $bits = explode("/", $path); // DANGER! EXPLOSIVES!
-include_once "-resources/markdown.php"; // Markdown converts markdown format to the HTMLs
+include_once "resources/markdown.php"; // Markdown converts markdown format to the HTMLs
 echo '<?xml version="1.0" encoding="UTF-8"?>';   
 ?>
 <rss version="2.0"
