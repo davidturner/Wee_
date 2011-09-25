@@ -17,7 +17,6 @@ if(defined("akismet")){
 }
 
 $path = $_SERVER['REQUEST_URI'];
-
 $bits = explode("/", $path); // Breaks the information collected above into manageable chunks, used to define what the page does.
 if($bits[1]==''){ $bits[1] = home; } // Determines home page based on defined constant in config.php  
 function getpaging($total,$current,$perPage,$category){ // This function exists to provide pagination for category pages of the site.
@@ -68,24 +67,27 @@ function toDisplay($myText,$category='',$splode = false){
       if(isset($contentMeta["Link"]) && $contentMeta["Link"] != ""){
         $content=$val[0].'<a href="'.$contentMeta["Link"].'" class="cta">'.$buttonText.'</a></article>';
       } else {
-        $content=$val[0].'<a href="'.url.'/'.$category.'/'.str_replace(".md","",$link[2]).'/" class="cta">'.$buttonText.'</a></article>';
+        $content=$val[0].'<a href="'.url.'/'.$category.'/'.str_replace(".".fileExt,"",$link[2]).'/" class="cta">'.$buttonText.'</a></article>';
       }
     }
     $content = str_replace('</article><a','<a',$content); // Handles Image links
     if(defined("phpthumb")){
-      $content = str_replace('img/',str_replace(".md","",$category."/".$link[2]).'/img/',$content); // Handles Image links
+      $content = str_replace('img/',str_replace(".".fileExt,"",$category."/".$link[2]).'/img/',$content); // Handles Image links
     }else{
-      $content = str_replace('img/',str_replace(".md","",$link[2]).'/img/',$content); // Handles Image links
+      $content = str_replace('img/',str_replace(".".fileExt,"",$link[2]).'/img/',$content); // Handles Image links
     }
-    $content = str_replace('aud/',str_replace(".md","",$link[2]).'/aud/',$content); // Handles Audio links
-    $content = str_replace('vid/',str_replace(".md","",$link[2]).'/vid/',$content); // Handles Video links
+    $content = str_replace('aud/',str_replace(".".fileExt,"",$link[2]).'/aud/',$content); // Handles Audio links
+    $content = str_replace('vid/',str_replace(".".fileExt,"",$link[2]).'/vid/',$content); // Handles Video links
     $content = str_replace('../../'.$link[1].'/','', $content); // Converts relative links into absolute ones (to neaten up code in category view)
     $content = str_replace('"'.$link[2],'"'.url.'/'.$category.'/'.$link[2], $content); // Converts misc links into absolute links. This is for <img>, <video> and <object> elements, making video and graphics work as they are intended to. Should also work with <audio> elements too.
   }else{
     $content = str_replace('../..','', $content);
     $content = str_replace('"/','"'.url.'/', $content);
+    if(!isset($link[2])){
+      $link[2] = '';
+    }
     if(defined("phpthumb")){
-      $content = str_replace('img/',str_replace(".md","",$category."/".$link[2]).'/img/',$content); // Handles Image links
+      $content = str_replace('img/',str_replace(".".fileExt,"",$category."/".$link[2]).'/img/',$content); // Handles Image links
     }else{
       $content = str_replace('"img','"'.url.'/'.$category.'/'.$link[2].'/img',$content); // Handles Image links
     }
@@ -151,16 +153,16 @@ if(defined('noindex')){
 }else{
   $cachetime = 24 * 60 * 60;  //  1 Day Cache
 }
-if(isset($bits[2]) && file_exists('categories/'.$bits[1].'/'.$bits[2]."/post.md")){
-  $file = 'categories/'.$bits[1].'/'.$bits[2]."/post.md";
-}elseif(file_exists("categories/pages/".$bits[1]."/post.md")){
-  $file = "categories/pages/".$bits[1]."/post.md";
+if(isset($bits[2]) && file_exists('categories/'.$bits[1].'/'.$bits[2]."/post.".fileExt)){
+  $file = 'categories/'.$bits[1].'/'.$bits[2]."/post.".fileExt;
+}elseif(file_exists("categories/pages/".$bits[1]."/post.".fileExt)){
+  $file = "categories/pages/".$bits[1]."/post.".fileExt;
 }elseif(is_dir("categories/".$bits[1])){
   $file = "categories/".$bits[1];
 }
 //echo $file;
 // Serve from the cache if it is younger than $cachetime, and a newer version of the page doesn't exist
-if (file_exists($cachefile) && time() - $cachetime < filemtime($cachefile) && filemtime($file) < filemtime($cachefile) && cache && !isset($_POST["important-input"])) {
+if (cache && file_exists($cachefile) && time() - $cachetime < filemtime($cachefile) && filemtime($file) < filemtime($cachefile) && cache && !isset($_POST["important-input"])) {
     include($cachefile);
     echo "<!-- Cached copy, generated ".date('r', filemtime($cachefile))." by Wee_ CMS -->\n";
     exit;
@@ -171,15 +173,15 @@ CMS Logic starts here
 *******/ 
 
 if(isset($bits[2]) && $bits[2]!='' && $bits[2]!='page' && $bits[1] != "pages") { // If there's a week, checks to see if post exists
-  $myText='categories/'.$bits[1].'/'.$bits[2]."/post.md";
+  $myText='categories/'.$bits[1].'/'.$bits[2]."/post.".fileExt;
   if(file_exists($myText)){
     $content = toDisplay($myText,$bits[1]);
   }else{
     define('404',true);
-    $content = toDisplay("errors/404.md");
+    $content = toDisplay("errors/404.".fileExt);
   }
 } else { /* If no week is defined, checks to see if it's a post, a page, or an error */
-  $myText = "categories/pages/".$bits[1]."/post.md";
+  $myText = "categories/pages/".$bits[1]."/post.".fileExt;
   if (file_exists($myText)){
     $content = toDisplay($myText);
   }elseif(is_dir("categories/".$bits[1]) && $bits[1] != "pages"){
@@ -201,15 +203,15 @@ if(isset($bits[2]) && $bits[2]!='' && $bits[2]!='page' && $bits[1] != "pages") {
     $category="categories/".$bits[1];
     
     /* Check if index.md exists, if it does use it to order posts */
-    if(file_exists($category."/index.md") && file_get_contents($category."/index.md") != ""){
-      $posts = preg_split( '/\r\n|\r|\n/', file_get_contents($category."/index.md"));
+    if(file_exists($category."/index.".fileExt) && file_get_contents($category."/index.".fileExt) != ""){
+      $posts = preg_split( '/\r\n|\r|\n/', file_get_contents($category."/index.".fileExt));
     }else{
       $posts=scandir($category, 1);
     }
     foreach($posts as $post){
-      if($post != '.' && $post != '..' && $post != '.DS_Store' && file_exists("categories/".$bits[1].'/'.$post.'/post.md') && $post != 'index.md' && 
+      if($post != '.' && $post != '..' && $post != '.DS_Store' && file_exists("categories/".$bits[1].'/'.$post.'/post.'.fileExt) && $post != 'index.'.fileExt && 
         $check >= $start && $check <= $end){
-        $myText="categories/".$bits[1].'/'.$post.'/post.md';
+        $myText="categories/".$bits[1].'/'.$post.'/post.'.fileExt;
         if(file_exists($myText)){
           $content .= toDisplay($myText,$bits[1],readmore);
         }
@@ -217,14 +219,24 @@ if(isset($bits[2]) && $bits[2]!='' && $bits[2]!='page' && $bits[1] != "pages") {
       $check++;
     }
     $paging = getpaging($check, $page, PostsPerPage, $bits[1]);
-    ($check==1 ? $content = toDisplay("errors/soon.md") : '');
+    if($check == 1){
+      if(file_exists("errors/soon.".fileExt)){
+        $content = toDisplay("errors/soon.".fileExt);
+      } else {
+        $content = toDisplay("errors/soon.md");
+      }
+    }
   }else{
-    $myText = "categories/journal/".$bits[1]."/post.md";
+    $myText = "categories/journal/".$bits[1]."/post.".fileExt;
     if (file_exists($myText)){
       $content = toDisplay($myText);
     }else{
       define('404',true);
-      $content = toDisplay("errors/404.md");
+      if(file_exists("errors/404.".fileExt)){
+        $content = toDisplay("errors/404.".fileExt);
+      } else {
+        $content = toDisplay("errors/404.md");
+      }
     }
   }
 }

@@ -27,14 +27,14 @@ $noList = array('.','..','.DS_Store','pages');
 
 function printDir($dir,$folder = false){
   global $noList;
-  if(file_exists("categories/".$dir.'/index.md')){
-    $pages = preg_split( '/\r\n|\r|\n/', file_get_contents("categories/".$dir.'/index.md'));
+  if(file_exists("categories/".$dir.'/index.'.fileExt)){
+    $pages = preg_split( '/\r\n|\r|\n/', file_get_contents("categories/".$dir.'/index.'.fileExt));
   }else{
     $pages = scandir("categories/".$dir);
   }
   foreach ($pages as $page) {
     if(!in_array($page, $noList)){
-      $myText = "categories/".$dir."/".$page."/post.md";
+      $myText = "categories/".$dir."/".$page."/post.".fileExt;
       if($folder){
         $loc = url.$dir."/".$page."/";
         $lastmod = date("Y-m-d",filemtime("categories/".$dir."/".$page."/"));

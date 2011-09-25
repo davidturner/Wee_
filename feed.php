@@ -65,18 +65,18 @@ function toDisplay($myText){
   $myHtml = Markdown($sect[1]);
   $stuff = explode('</h1>',$myHtml);
   $title = $content[3];
-  $link = url.'/'.str_replace("categories/","",str_replace("post.md","", $myText));
+  $link = url.'/'.str_replace("categories/","",str_replace("post.".fileExt,"", $myText));
   
   if (defined('phpthumb')) {
   	$str = str_replace("##FILE##","",phpthumb);
-  	$myHtml = str_replace('"img/','"'.url.$str.str_replace("categories/", "", str_replace("post.md","", $myText)).'img/',$myHtml);
+  	$myHtml = str_replace('"img/','"'.url.$str.str_replace("categories/", "", str_replace("post.".fileExt,"", $myText)).'img/',$myHtml);
   } else {
   	$myHtml = str_replace('"img/','"'.$link.'img/',$myHtml);
   }
   $myHtml = str_replace('"vid/','"'.$link.'vid/',$myHtml);
   $myHtml = str_replace('"aud/','"'.$link.'aud/',$myHtml);
-  //$myHTML = str_replace('img/',str_replace(".md","",$link[2]).'/img/',$myHTML); // Handles Image links
-  //$myHTML = str_replace('vid/',str_replace(".md","",$link[2]).'/vid/',$myHTML); // Handles Audio links
+  //$myHTML = str_replace('img/',str_replace(".".fileExt,"",$link[2]).'/img/',$myHTML); // Handles Image links
+  //$myHTML = str_replace('vid/',str_replace(".".fileExt,"",$link[2]).'/vid/',$myHTML); // Handles Audio links
   $xml["".strtotime($content[0])] = '<item>'."\n\t".'<title>'.str_replace("& ","&amp; ", $title).'</title>'."\n\t".'<link>'.$link.'</link>'."\n\t".'<pubDate>'.date('r',strtotime($content[0])).'</pubDate>'."\n\t".'<dc:creator>'.AUTHOR.'</dc:creator>'."\n\t"."\n\t".'<content:encoded><![CDATA['.
    str_replace(array("<!--[TimeStamp]-->","<!--[More]-->",' markdown="1"','../..'), "", 
    str_replace('"/','"'.url.'/',
@@ -89,12 +89,12 @@ function toDisplay($myText){
    ']]></content:encoded>'."\n".'</item>';  
   fclose($file);
 }
-function theLoop($toLoop){ if(is_dir($toLoop)) : $category=$toLoop; if(file_exists($category."/index.md") && file_get_contents($category."/index.md") != ""){
-  $posts = preg_split( '/\r\n|\r|\n/', file_get_contents($category."/index.md"));
+function theLoop($toLoop){ if(is_dir($toLoop)) : $category=$toLoop; if(file_exists($category."/index.".fileExt) && file_get_contents($category."/index.".fileExt) != ""){
+  $posts = preg_split( '/\r\n|\r|\n/', file_get_contents($category."/index.".fileExt));
   //print_r($posts);
 }else{
   $posts=scandir($category, 1);
-}; foreach($posts as $post) : if($post!='.' && $post!='..') : $myText=$toLoop.'/'.$post.'/post.md'; toDisplay($myText); endif; endforeach; endif; }   
+}; foreach($posts as $post) : if($post!='.' && $post!='..') : $myText=$toLoop.'/'.$post.'/post.'.fileExt; toDisplay($myText); endif; endforeach; endif; }   
 
 if($bits[0]!=''){
   theLoop("categories/".$bits[0]);

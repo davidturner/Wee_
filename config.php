@@ -8,7 +8,10 @@ $url = 'http://'.str_replace('www.', '', $_SERVER['SERVER_NAME']);
 define("SiteName", "Portfolio of David Turner");  // Used in RSS feed, can be used for Page Title generation
 define("Desc","Thoughts, musings and experimentations of David Turner");  // Used to set the RSS Feed's Description
 define("Author", "David Turner", true);  // Sets default post Author. Can be overridden on individual posts
-define("siteEmail","hi@davidturner.name");
+define("siteEmail","");  //  Can be used for things like contact forms, so emails go to the right place.
+
+# Used for file management purposes
+define("fileExt", "md");  //  Defaults to md used for MarkDown files. If you change this you wil *need* to change all post.md and index.md files used in the CMS. You can also change the content in the errors folder to match, but this *isn't* necessary.
 
 # Some Site Data
 define("Divider", " | ");  // Separator, used for page title generation and nothing else
