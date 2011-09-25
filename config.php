@@ -5,8 +5,8 @@
 $url = 'http://'.str_replace('www.', '', $_SERVER['SERVER_NAME']);
 
 # Site Information used in various parts of the CMS.
-define("SiteName", "Portfolio of David Turner");  // Used in RSS feed, can be used for Page Title generation
-define("Desc","Thoughts, musings and experimentations of David Turner");  // Used to set the RSS Feed's Description
+define("SiteName", "Wee_ CMS Test Site");  // Used in RSS feed, can be used for Page Title generation
+define("Desc","Wee_ CMS is a flat-file CMS that focuses on letting you create content");  // Used to set the RSS Feed's Description
 define("Author", "David Turner", true);  // Sets default post Author. Can be overridden on individual posts
 define("siteEmail","");  //  Can be used for things like contact forms, so emails go to the right place.
 
