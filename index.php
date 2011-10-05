@@ -125,9 +125,14 @@ function getComment($myText){
 }
 
 function formatDate($pubdate,$finalFormat=dateFormat){
-  $format = 'd-m-Y H:i';
-  $date = DateTime::createFromFormat($format, $pubdate);
-  return date($finalFormat, $date->format('U'));
+  return date($finalFormat, strtotime($pubdate));
+//  if (function_exists('date_create_from_format')) {
+//    $format = 'd-m-Y H:i';
+//    $date = DateTime::createFromFormat($format, $pubdate);
+//    return date($finalFormat, $date->format('U'));
+//  } else {
+//    return date(dateFormat, strtotime($pubDate));
+//  }
 }
 
 function parseMeta($meta){
