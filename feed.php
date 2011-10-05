@@ -34,8 +34,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 	>
 <channel>
 	<title><?php echo SiteName; ?></title>
-	<atom:link href="http://<?=url;?>" rel="self" type="application/rss+xml" />
-	<link>http://<?php echo url; ?>/</link>    
+	<atom:link href="<?php echo url; ?>/feed/" rel="self" type="application/rss+xml" />
+	<link><?php echo url; ?>/</link>    
 	<description><?php echo Desc; ?></description>
 	<language>en</language>
 	<sy:updatePeriod>daily</sy:updatePeriod>
