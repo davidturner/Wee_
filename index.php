@@ -192,6 +192,7 @@ if(isset($bits[2]) && $bits[2]!='' && $bits[2]!='page' && $bits[1] != "pages") {
   }elseif(is_dir("categories/".$bits[1]) && $bits[1] != "pages"){
     define('title',ucwords(str_replace("-", " ", $bits[1])));
     $check=1;
+    $postCount=0;
     if(isset($bits[3])){
       $page = $bits[3];
     }else{
@@ -220,11 +221,12 @@ if(isset($bits[2]) && $bits[2]!='' && $bits[2]!='page' && $bits[1] != "pages") {
         if(file_exists($myText)){
           $content .= toDisplay($myText,$bits[1],readmore);
         }
+        $postCount++;
       }
       $check++;
     }
     $paging = getpaging($check, $page, PostsPerPage, $bits[1]);
-    if($check == 1){
+    if($postCount == 0){
       if(file_exists("errors/soon.".fileExt)){
         $content = toDisplay("errors/soon.".fileExt);
       } else {
