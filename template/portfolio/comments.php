@@ -100,9 +100,10 @@
     }else{
       $file = $dir.$time.".md";
     }
-    $handle = fopen($file, 'w') or die('Cannot open file:  '.$file);
-    
-    fwrite($handle, $fullcomment);
+    if($finalcomment["flagged"] == "true" && defined("saveSpam") && saveSpam || $finalcomment["flagged"] == "false"){
+      $handle = fopen($file, 'w') or die('Cannot open file:  '.$file);
+      fwrite($handle, $fullcomment);
+    }
   }
 ?>
 <section id="comments-area">

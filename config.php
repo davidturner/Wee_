@@ -45,5 +45,7 @@ define('dateFormatBefore',"Posted on ");
 define("dateFormat",'d/m/Y'); // Required if you want post dates to show up. Replaces <!--[TimeStamp]--> in posts.
 define('dateFormatAfter',' by <!--[Author]-->');
 
+define('saveSpam',true); // Saves questionable comments in a fashion that won't show it on the site. Useful in the event that comments get erroneously marked as spam
+
 # Optional extras, not currently required
 //define("phpthumb",'/phpthumb/phpThumb.php?src=##FILE##&w=550&h=120&fltr[]=bord|2|0|0|333333'); // In place in case you want to use phpthumb for image cropping and resizing
