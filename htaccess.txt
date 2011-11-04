@@ -225,7 +225,7 @@ FileETag None
 RewriteBase /
 
 RewriteCond %{REQUEST_URI} (img|vid|audio|js|.)
-RewriteCond %{REQUEST_URI} ([^/]+)/([^/]+)
+RewriteCond %{REQUEST_URI} !([^/]+)/
 RewriteCond %{REQUEST_URI} !comments
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
