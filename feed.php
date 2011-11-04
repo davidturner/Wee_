@@ -77,15 +77,17 @@ function toDisplay($myText){
   $myHtml = str_replace('"aud/','"'.$link.'aud/',$myHtml);
   //$myHTML = str_replace('img/',str_replace(".".fileExt,"",$link[2]).'/img/',$myHTML); // Handles Image links
   //$myHTML = str_replace('vid/',str_replace(".".fileExt,"",$link[2]).'/vid/',$myHTML); // Handles Audio links
-  $xml["".strtotime($content[0])] = '<item>'."\n\t".'<title>'.str_replace("& ","&amp; ", $title).'</title>'."\n\t".'<link>'.$link.'</link>'."\n\t".'<pubDate>'.date('r',strtotime($content[0])).'</pubDate>'."\n\t".'<dc:creator>'.AUTHOR.'</dc:creator>'."\n\t"."\n\t".'<content:encoded><![CDATA['.
-   str_replace(array("<!--[TimeStamp]-->","<!--[More]-->",' markdown="1"','../..'), "", 
-   str_replace('"/','"'.url.'/',
-   //str_replace('../..','', 
-   str_replace("</cite></p>","</cite>",
-   str_replace("<p><cite>","<cite>",
-   //str_replace(' markdown="1"','',
-   str_replace('<p><img','<img',
-   str_replace('/></p>','/>',$myHtml)))))).
+  $xmlPost = str_replace(array("<!--[TimeStamp]-->",
+  "<!--[More]-->",' markdown="1"','../..'), "", 
+  str_replace('"/','"'.url.'/',
+  //str_replace('../..','', 
+  str_replace("</cite></p>","</cite>",
+  str_replace("<p><cite>","<cite>",
+  //str_replace(' markdown="1"','',
+  str_replace('<p><img','<img',
+  str_replace('/></p>','/>',$myHtml))))));
+  $xml["".strtotime($content[0])] = '<item>'."\n\t".'<title>'.str_replace("& ","&amp; ", $title).'</title>'."\n\t".'<link>'.$link.'</link>'."\n\t".'<pubDate>'.date('r',strtotime($content[0])).'</pubDate>'."\n\t".'<dc:creator>'.AUTHOR.'</dc:creator>'."\n\t"."\n\t"./*'<description>'.str_replace("<", "&lt;", str_replace(">", "&gt;", $xmlPost)).'</description>'.*/'<content:encoded><![CDATA['.
+   $xmlPost.
    ']]></content:encoded>'."\n".'</item>';  
   fclose($file);
 }

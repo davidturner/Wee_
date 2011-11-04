@@ -1,9 +1,3 @@
-<?php
-if(url == 'http://uni.david.turner.name'){
-  Header( "HTTP/1.1 301 Moved Permanently" );
-  Header( "Location: ".str_replace('david.turner','davidturner',url).$path );
-}
-?>
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html lang="en-GB" class="no-js ie6"> <![endif]--> 
 <!--[if IE 7]>    <html lang="en-GB" class="no-js ie7"> <![endif]--> 

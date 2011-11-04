@@ -224,7 +224,8 @@ FileETag None
 <IfModule mod_rewrite.c>
 RewriteBase /
 
-RewriteCond %{REQUEST_URI} (img|vid|audio|js|single.css|extra.css|post.md)
+RewriteCond %{REQUEST_URI} (img|vid|audio|js|.)
+RewriteCond %{REQUEST_URI} !comments
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-l
