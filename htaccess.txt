@@ -203,44 +203,6 @@ AddType text/plain md markdown mdown txt
 #   developer.yahoo.com/performance/rules.html#etags
 FileETag None
 
-
-Redirect 301 /tools /journal/The-Tools-I-Use-to-Get-Things-DONE
-Redirect 301 /seo-means /journal/SEO-and-What-It-Means-For-You
-Redirect 301 /html5-flash /HTML5-vs-Flash
-Redirect 301 /sometimes-less-is-more /journal/Sometimes-LESS-IS-MORE
-Redirect 301 /new-content /journal/Whats-That-New-Content
-Redirect 301 /php-generated-mosaic /journal/PHP-Generated-Mosaic
-Redirect 301 /blog/php-generated-mosaic /journal/PHP-Generated-Mosaic
-Redirect 301 /revisiting-previous-work /journal/Revisiting-Previous-Work
-Redirect 301 /blog/events-revelations /journal/Events-and-Revelations
-Redirect 301 /events-revelations /journal/Events-and-Revelations
-Redirect 301 /latest-site-demos /examples
-Redirect 302 /code /examples
-Redirect 301 /demos /examples
-Redirect 301 /blog /journal
-Redirect 301 /examples/computations /examples/PHP-Generated-Mosaic
-Redirect 301 /examples/jqueryswitch /examples/jQuery-Image-Switcher
-Redirect 301 /examples/buttons /examples/Simple-CSS3-Buttons
-Redirect 301 /examples/jquerygraphs /examples/Dynamic-jQuery-Graph
-Redirect 301 /examples/jquery-image-slider /examples/jQuery-Image-Slider
-Redirect 301 /examples/dynamicjquerygraph /examples/Dynamic-jQuery-Graph
-Redirect 301 /examples/completionbar /examples/jQuery-Completion-Bar
-Redirect 301 /examples/progressbar /examples/jQuery-Progress-Bar
-Redirect 301 /examples/responsive-web-design-960-grid-style /examples/Responsive-Web-Design-960-Grid-Style
-Redirect 301 /portfolio/365-design http://davidturner.name
-Redirect 301 /portfolio/?redirect=true http://davidturner.name
-Redirect 301 /portfolio http://davidturner.name
-Redirect 301 /about http://davidturner.name
-Redirect 301 /contact http://davidturner.name
-Redirect 301 /about/?page_id=2?redirect=true http://davidturner.name
-Redirect 301 /wordpress?page_id=2?redirect=true http://davidturner.name
-Redirect 301 /wordpress?page_id=2 http://davidturner.name
-Redirect 301 /wordpress/?page_id=2 http://davidturner.name
-Redirect 301 /grips-html5-part-1/ http://www.biggiantcrayon.com/post-getting-to-grips-with-html5-part-1/
-Redirect 301 /getting-grips-html5-part-3/ http://www.biggiantcrayon.com/post-getting-grips-html5-part-3/
-Redirect 301 /grips-html5-part-2/ http://www.biggiantcrayon.com/post-getting-to-grips-with-html5-part-2/
-Redirect 301 /tblog/php-generated-mosaic /journal/PHP-Generated-Mosaic/
-
 <IfModule mod_rewrite.c>
   RewriteEngine On
 </IfModule>
@@ -260,19 +222,20 @@ Redirect 301 /tblog/php-generated-mosaic /journal/PHP-Generated-Mosaic/
 </IfModule>
 
 <IfModule mod_rewrite.c>
-RewriteBase /
+RewriteBase /  
+
+RewriteRule ^feed/([^/]+) feed.php [L]
+RewriteRule ^sitemap.xml sitemap.php [L]
+RewriteRule ^feed feed.php [L]    
 
 RewriteCond %{REQUEST_URI} (img|vid|audio|js|.|([^/]+)/([^/]+)/)
-#RewriteCond %{REQUEST_URI} !([^/]+)/
+RewriteCond %{REQUEST_URI} !([^/]+)/page
 RewriteCond %{REQUEST_URI} !/comments/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-l
 RewriteRule ^(.*)?$ categories/$1 [QSA,L]
-  
-RewriteRule ^feed/([^/]+) feed.php [L]
-RewriteRule ^sitemap.xml sitemap.php [L]
-RewriteRule ^feed feed.php [L]     
+ 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule . index.php [L]         
 </IfModule>
