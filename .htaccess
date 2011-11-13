@@ -228,9 +228,8 @@ RewriteRule ^feed/([^/]+) feed.php [L]
 RewriteRule ^sitemap.xml sitemap.php [L]
 RewriteRule ^feed feed.php [L]    
 
-RewriteCond %{REQUEST_URI} (img|vid|audio|js|.|([^/]+)/([^/]+)/)
-RewriteCond %{REQUEST_URI} !([^/]+)/page
-RewriteCond %{REQUEST_URI} !/comments/
+RewriteCond %{REQUEST_URI} ([^/]+)/([^/]+)
+RewriteCond %{REQUEST_URI} !(/page/|/comments/)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-l

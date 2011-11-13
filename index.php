@@ -22,7 +22,7 @@ if($bits[1]==''){ $bits[1] = home; } // Determines home page based on defined co
 function getpaging($total,$current,$perPage,$category){ // This function exists to provide pagination for category pages of the site.
   $pages = ceil($total/PostsPerPage);
   $start = 1;
-  if($pages != 1 && $total != (PostsPerPage +1)){
+  if($pages != 1 && $total >= (PostsPerPage +1)){
   $toreturn = '<section id="pagination"><span>Pages:</span><ol>';
     while ($start <= $pages) {
       $toreturn .= '<li><a ';
@@ -146,6 +146,7 @@ function parseMeta($meta){
   return $contentMeta;
 }
 
+
 /*******
 Caching logic starts here - Checks to see if a cached file exists
 *******/ 
@@ -172,10 +173,10 @@ if (cache && file_exists($cachefile) && time() - $cachetime < filemtime($cachefi
     echo "<!-- Cached copy, generated ".date('r', filemtime($cachefile))." by Wee_ CMS -->\n";
     exit;
 }
-
 /*******
 CMS Logic starts here
 *******/ 
+
 
 if(isset($bits[2]) && $bits[2]!='' && $bits[2]!='page' && $bits[1] != "pages") { // If there's a week, checks to see if post exists
   $myText='categories/'.$bits[1].'/'.$bits[2]."/post.".fileExt;
@@ -223,7 +224,9 @@ if(isset($bits[2]) && $bits[2]!='' && $bits[2]!='page' && $bits[1] != "pages") {
         }
         $postCount++;
       }
-      $check++;
+      if($post != '.' && $post != '..' && $post != '.DS_Store' && file_exists("categories/".$bits[1].'/'.$post.'/post.'.fileExt) && $post != 'index.'.fileExt){
+        $check++;
+      }
     }
     $paging = getpaging($check, $page, PostsPerPage, $bits[1]);
     if($postCount == 0){
