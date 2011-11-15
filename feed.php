@@ -51,21 +51,23 @@ function toDisplay($myText){
   $filecontent = fread($file, filesize($myText)); 
   $sect = explode('=-=-=',$filecontent);
   $postmeta = explode("\n",$sect[0]);
-  $val = 0;
   foreach ($postmeta as $meta) {
       $topost = explode(': ',$meta);  
       //echo $topost[0];
       if(isset($topost[1])){
-      $content[$val] = $topost[1]; 
+      $content[$topost[0]] = $topost[1]; 
     }else{
-      $content[$val] = '';
+      $content[$topost[0]] = '';
     }
-    $val++;
   }
   $myHtml = Markdown($sect[1]);
   $stuff = explode('</h1>',$myHtml);
-  $title = $content[3];
-  $link = url.'/'.str_replace("categories/","",str_replace("post.".fileExt,"", $myText));
+  $title = $content["Title"];
+  if(isset($content["Link"]) && $content["Link"] != ""){
+    $link = $content["Link"];
+  } else {
+    $link = url.'/'.str_replace("categories/","",str_replace("post.".fileExt,"", $myText));
+  }
   
   if (defined('phpthumb')) {
   	$str = str_replace("##FILE##","",phpthumb);
@@ -85,10 +87,14 @@ function toDisplay($myText){
   str_replace("<p><cite>","<cite>",
   //str_replace(' markdown="1"','',
   str_replace('<p><img','<img',
-  str_replace('/></p>','/>',$myHtml))))));
-  $xml["".strtotime($content[0])] = '<item>'."\n\t".'<title>'.str_replace("& ","&amp; ", $title).'</title>'."\n\t".'<link>'.$link.'</link>'."\n\t".'<pubDate>'.date('r',strtotime($content[0])).'</pubDate>'."\n\t".'<dc:creator>'.AUTHOR.'</dc:creator>'."\n\t"."\n\t"./*'<description>'.str_replace("<", "&lt;", str_replace(">", "&gt;", $xmlPost)).'</description>'.*/'<content:encoded><![CDATA['.
+  str_replace('href="#', 'href="'.$link.'#',
+  str_replace('/></p>','/>',$myHtml)))))));
+  $xmlPost = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $xmlPost);
+  $xml["".strtotime($content["Pubdate"])] = '<item>'."\n\t".'<title>'.str_replace("& ","&amp; ", $title).'</title>'."\n\t".'<link>'.$link.'</link>'."\n\t".'<pubDate>'.date('r',strtotime($content["Pubdate"])).'</pubDate>'."\n\t".'<dc:creator>'.AUTHOR.'</dc:creator>'."\n\t"."\n\t"./*'<description>'.str_replace("<", "&lt;", str_replace(">", "&gt;", $xmlPost)).'</description>'.*/'<description><![CDATA['.
    $xmlPost.
-   ']]></content:encoded>'."\n".'</item>';  
+   ']]></description><content:encoded><![CDATA['.
+    $xmlPost.
+    ']]></content:encoded><guid>'.$link.'</guid>'."\n".'</item>';  
   fclose($file);
 }
 function theLoop($toLoop){ if(is_dir($toLoop)) : $category=$toLoop; if(file_exists($category."/index.".fileExt) && file_get_contents($category."/index.".fileExt) != ""){
