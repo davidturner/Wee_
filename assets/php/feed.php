@@ -53,10 +53,11 @@ foreach ($folders as $folder) {
 
 
 krsort($xml);
-$count = 0;
+$count = 1;
 foreach($xml as $xml){
   if($count <= $site->posts->feed){
     echo $xml;
+    $count++;
   }
 }
 ?>
