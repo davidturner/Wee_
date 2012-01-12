@@ -20,7 +20,7 @@ function isFile($folder,$file) {
 function getComment($comment){
   $file=fopen($comment, 'r');
   $filecontent = fread($file, filesize($comment));
-  $sect = explode('=-=-=',$filecontent); // Seperates post metadata from content.
+  $sect = explode('=-=-=',$filecontent,2); // Seperates post metadata from content.
   $contentMeta = parseMeta($sect[0]);
   $myHtml = Markdown($sect[1]);
   $contentMeta["post"] = $myHtml; // Reorganises some of the elements of the site's HTML, cleaning up where markdown does weird things to code
@@ -246,7 +246,7 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
   } else {
     $template = '[[content]]';
   }
-  $segments = explode('=-=-=', file_get_contents($file));
+  $segments = explode('=-=-=', file_get_contents($file),2);
   foreach(parseMeta($segments[0]) as $key => $value){
     $key = strtolower($key);
     $page->$key = $value;
@@ -293,9 +293,9 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
   }
   
   $content = str_replace('href="/', 'href="'.$site->url.'/', 
-             str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'#',
+             str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.str_replace('categories/', '', str_replace('post.'.$site->ext,'',$file)).'#',
              $content));
-  $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'$2"',$content);
+  $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.str_replace('categories/', '', str_replace('post.'.$site->ext,'',$file)).'$2"',$content);
   
   $page->content = $content;
   return $page;
