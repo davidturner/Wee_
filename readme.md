@@ -120,6 +120,10 @@ Wee\_ makes use of a *very* rudimentary theming system. Themes are saved in the 
 
 I am currently working on a new theme, entitled `basic` that is aimed at being usable as a starting theme, but also as a template for writing your own themes, using the `starkers` base.
 
+###Forcing Downloads
+
+New in the latest series of updates is the ability to force file downloads. Any files you want users to download can now be stored in the `media` folder. To link to them, and force the download, link to `force-download/[filename]`. Wee_ will work out what needs to be done, and start the download process.
+
 ##Problems
 
 If you run into any issues please get in touch with me via [Twitter][4] or [email][5] and I'll see what can be done to resolve your issues. One of the perks of testing things... is sometimes they break.
