@@ -20,7 +20,7 @@ function isFile($folder,$file) {
 function getComment($comment){
   $file=fopen($comment, 'r');
   $filecontent = fread($file, filesize($comment));
-  $sect = explode('=-=-=',$filecontent,2); // Seperates post metadata from content.
+  $sect = explode('=-=-=',$filecontent); // Seperates post metadata from content.
   $contentMeta = parseMeta($sect[0]);
   $myHtml = Markdown($sect[1]);
   $contentMeta["post"] = $myHtml; // Reorganises some of the elements of the site's HTML, cleaning up where markdown does weird things to code
@@ -97,6 +97,16 @@ function mimetype($ext){
     case 'webp':
       return 'image/webp';
       break;
+    case 'png':
+      return 'image/png';
+      break;
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+      break;
+    case 'gif':
+      return 'image/gif';
+      break;
     case 'manifest':
       return 'text/cache-manifest';
       break;
@@ -108,6 +118,15 @@ function mimetype($ext){
       break;
     case 'epub':
       return 'application/epub+zip';
+      break;
+    case 'pdf':
+      return 'application/pdf';
+      break;
+    case 'zip':
+      return 'application/zip';
+      break;
+    case 'rar':
+      return 'application/x-rar-compressed';
       break;
     default:
       return 'text/plain';
@@ -136,10 +155,16 @@ function extFix($ext){
     'wof' => 'woff',
     'eo' => 'eot',
     'gi' => 'gif',
-    'tx' => 'txt'
+    'tx' => 'txt',
+    'm' => 'md',
+    'tex' => 'text',
+    'markdow' => 'markdown',
+    'mdow' => 'mdown'
   );
   if (isset($extensions[$ext])) {
     return $extensions[$ext];
+  } else {
+    return $ext;
   }
 }
 
@@ -152,13 +177,11 @@ function parseURL($slug,$site,$file=''){
   }
   
   $ext = explode('.', end($slug));
-  
   if(end($ext) != end($slug)){
     for ($i = 0; $i < count($ext) - 1; $i++) {
       $file .= $ext[$i].'.';
     }
     $file = $file.extFix(end($ext));
-    
     $slugcount = count($slug)-1;
     $slug[$slugcount] = $file;
   }
@@ -203,6 +226,19 @@ function parseURL($slug,$site,$file=''){
     $site->page = 1;
     $parsedfile = parseFile('categories/pages/'.$slug[0].'/post.'.$site->ext,$site);
     return $parsedfile;
+  } elseif ($slug[0] == 'force-download' && isset($slug[1]) && is_file('media/'.$slug[1])) {
+    #echo 'media/'.$slug[1];die;
+    header("Cache-Control: public");
+    header("Content-Description: File Transfer");
+    header("Content-Disposition: attachment; filename=".$slug[1]);
+    $ext = explode('.',$site->query);
+    $mimetype = mimetype(end($ext));
+    header('Content-type: '.$mimetype);
+    #header("Content-Type: application/zip");
+    header("Content-Transfer-Encoding: binary");
+    
+    // Read the file from disk
+    readfile('media/'.$slug[1]);die;
   } else {
     $site->page = 1;
     $site->error = 1;
@@ -246,7 +282,7 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
   } else {
     $template = '[[content]]';
   }
-  $segments = explode('=-=-=', file_get_contents($file),2);
+  $segments = explode('=-=-=', file_get_contents($file));
   foreach(parseMeta($segments[0]) as $key => $value){
     $key = strtolower($key);
     $page->$key = $value;
@@ -293,9 +329,9 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
   }
   
   $content = str_replace('href="/', 'href="'.$site->url.'/', 
-             str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.str_replace('categories/', '', str_replace('post.'.$site->ext,'',$file)).'#',
+             str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'#',
              $content));
-  $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.str_replace('categories/', '', str_replace('post.'.$site->ext,'',$file)).'$2"',$content);
+  $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'$2"',$content);
   
   $page->content = $content;
   return $page;
@@ -347,6 +383,12 @@ function loadCategory($file,$site){
 }
 
 function generateSitemap($site){
+  include 'sitemap.php';
+}
+
+function generateFeed($site){
+  include 'feed.php';
+}nerateSitemap($site){
   include 'sitemap.php';
 }
 

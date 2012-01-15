@@ -226,6 +226,7 @@ RewriteBase /
 
 RewriteCond %{REQUEST_URI} !template
 RewriteCond %{REQUEST_URI} !ai-cache
+RewriteCond %{REQUEST_URI} !force-download
 RewriteRule \.(?:jpe?g|gif|png)$ img.php [QSA,L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
