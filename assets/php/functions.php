@@ -327,11 +327,17 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
       $content = str_replace("<time ", "<time pubdate ", $content);
     }
   }
-  
-  $content = str_replace('href="/', 'href="'.$site->url.'/', 
-             str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'#',
-             $content));
-  $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'$2"',$content);
+  if($site->page){
+    $content = str_replace('href="/', 'href="'.$site->url.'/', 
+               str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.'#',
+               $content));
+    $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.'$2"',$content);
+  } else {
+    $content = str_replace('href="/', 'href="'.$site->url.'/', 
+               str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'#',
+               $content));
+    $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'$2"',$content);
+  }
   
   $page->content = $content;
   return $page;

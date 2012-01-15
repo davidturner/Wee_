@@ -30,6 +30,8 @@ $requested_uri  = parse_url(urldecode($_SERVER['REQUEST_URI']), PHP_URL_PATH);
 $requested_file = basename($requested_uri);
 if(file_exists($document_root.'/categories'.$requested_uri)){
   $source_file  = $document_root.'/categories'.$requested_uri;
+} elseif (file_exists($document_root.'/categories/pages'.$requested_uri)) {
+  $source_file  = $document_root.'/categories/pages'.$requested_uri;
 } else {
   $source_file  = $document_root.$requested_uri;
 }
