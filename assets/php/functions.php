@@ -388,10 +388,4 @@ function generateSitemap($site){
 
 function generateFeed($site){
   include 'feed.php';
-}nerateSitemap($site){
-  include 'sitemap.php';
-}
-
-function generateFeed($site){
-  include 'feed.php';
 }
