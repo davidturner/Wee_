@@ -1,4 +1,22 @@
 <?php header("Content-Type: application/xml; charset=UTF-8");?>
+<?php 
+
+$site->cachefile = 'cache/'.str_replace("/","-",substr($site->query, 1, -1)).'.xml';
+$cachetime = 60 * 60 * 4;  // 4 Hour Cache
+// Serve from the cache if it is younger than $cachetime, and a newer version of the page doesn't exist
+
+
+if ($site->cache->active && file_exists($site->cachefile) && time() - $cachetime < filemtime($site->cachefile)) {
+    echo file_get_contents($site->cachefile);
+    echo "<!-- Cached copy, generated ".date('r', filemtime($site->cachefile))." by Wee_ CMS -->\n";
+    die;
+}
+
+if($site->cache->active && !isset($site->error)){
+  ob_start(); // Start the output buffer
+}
+
+?>
 <?php
 echo '<?xml version="1.0" encoding="UTF-8"?>';   
 ?>
@@ -41,9 +59,10 @@ foreach ($folders as $folder) {
         }
         $postData->content = str_replace('<article class="feed">', '',
                              str_replace('</article>','',
+                                                  str_replace('feed//',$folder.'/'.$post.'/',
                              str_replace('href="/', 'href="'.$site->url.'/', 
                              str_replace('href="#', 'href="'.$site->url.'/'.$folder.'/'.$post.'/'.'#', 
-                             $postData->content))));
+                             $postData->content)))));
         $postData->content=preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$folder.'/'.$post.'/'.'$2"',$postData->content);
         $xml[strtotime($postData->pubdate)] = '<item>'."\n\t".'<title>'.str_replace("& ","&amp; ", $postData->title).'</title>'."\n\t".'<link>'.$postData->link.'</link>'."\n\t".'<pubDate>'.date('r',strtotime($postData->pubdate)).'</pubDate>'."\n\t".'<dc:creator>'.$site->author->name.'</dc:creator>'."\n\t"."\n\t".'<description><![CDATA['.$postData->content.']]></description><content:encoded><![CDATA['.$postData->content.']]></content:encoded><guid>'.$postData->link.'</guid>'."\n".'</item>';
       }
@@ -63,4 +82,18 @@ foreach($xml as $xml){
 ?>
 </channel>
 </rss>
-<?php die;
+<?php
+
+if($site->cache->active && !isset($site->error)){
+  $fp = fopen($site->cachefile, 'w');
+  if($site->cache->compress && $site->cache->compress){
+    $pageContents = preg_replace( "/(?:(?<=\>)|(?<=\/\>))(\s+)(?=\<\/?)/","", ob_get_contents() );
+  } else {
+    $pageContents = ob_get_contents();
+  }
+  fwrite($fp, $pageContents);
+  fclose($fp);
+  ob_end_flush(); // Send the output to the browser
+}
+
+die;

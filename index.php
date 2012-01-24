@@ -39,7 +39,7 @@ if($site->slug[0] == '' && !$site->redir){
 
 $page = parseURL($site->slug,$site);
 
-if($site->cache->active && !isset($site->error)){
+if($site->cache->active && !isset($site->error) && !isset($_POST['important-input'])){
   ob_start(); // Start the output buffer
 }
 
@@ -60,7 +60,7 @@ if(isset($page->contactme)){
 
 include 'themes/'.$site->theme.'/footer.php';
 
-if($site->cache->active && !isset($site->error)){
+if($site->cache->active && !isset($site->error) && !isset($_POST['important-input'])){
   $fp = fopen($site->cachefile, 'w');
   if($site->cache->compress && $site->cache->compress){
     $pageContents = preg_replace( "/(?:(?<=\>)|(?<=\/\>))(\s+)(?=\<\/?)/","", ob_get_contents() );

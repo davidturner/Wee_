@@ -1,6 +1,20 @@
 <?php
-ob_start(); // Start the output buffer
 header("Content-Type: application/xml; charset=UTF-8");
+
+$site->cachefile = 'cache/sitemap.xml';
+$cachetime = 60 * 60 * 4;  // 4 Hour Cache
+// Serve from the cache if it is younger than $cachetime, and a newer version of the page doesn't exist
+
+if ($site->cache->active && file_exists($site->cachefile) && time() - $cachetime < filemtime($site->cachefile)) {
+    echo file_get_contents($site->cachefile);
+    echo "<!-- Cached copy, generated ".date('r', filemtime($site->cachefile))." by Wee_ CMS -->\n";
+    die;
+}
+
+if($site->cache->active && !isset($site->error)){
+  ob_start(); // Start the output buffer
+}
+
 ?>
 <?php echo '<?xml version="1.0" encoding="UTF-8"?>'."\n";?>
 <?php echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";?>
@@ -50,5 +64,19 @@ foreach ($categories as $category) {
   }
 }
 ?>
-<?php echo '</urlset>'."\n";?>
-<?php die;
+<?php echo '</urlset>'."\n";
+
+
+if($site->cache->active && !isset($site->error)){
+  $fp = fopen($site->cachefile, 'w');
+  if($site->cache->compress && $site->cache->compress){
+    $pageContents = preg_replace( "/(?:(?<=\>)|(?<=\/\>))(\s+)(?=\<\/?)/","", ob_get_contents() );
+  } else {
+    $pageContents = ob_get_contents();
+  }
+  fwrite($fp, $pageContents);
+  fclose($fp);
+  ob_end_flush(); // Send the output to the browser
+}
+
+die;
