@@ -59,6 +59,103 @@ function parseMeta($meta){
   return $contentMeta;
 }
 
+function getTags($search,$site){
+  $page->noindex = 1;
+  // Wee_ Article path
+  $path = 'categories';
+  $search = urldecode($search);
+  
+  // Open the article path of the Journal
+  $journeyDirectory = scandir( $path );
+  
+  foreach ($journeyDirectory as $category) {
+    //echo $category;
+    if(!in_array($category, $site->nofeed)){
+      $cat = scandir( $path.'/'.$category );
+      foreach ($cat as $post) {
+        if($post != '.' && $post != '..'){
+          $dirArray[] = $category.'/'.$post;
+        }
+      }
+    }
+  }
+  
+  // Count elements in array
+  $indexLength = count( $dirArray );
+  
+  // Sort them
+  sort($dirArray);
+  
+  // Loop through the array of files and stack directories ( the posts ) only
+  for($i=0; $i < $indexLength; $i++) {
+  	
+  	if( is_dir( $path.'/'.$dirArray[$i] ) ) {
+  		
+  		$postList[] = $path.'/'.$dirArray[$i];
+  		
+  	}
+  }
+  
+  $taggedPosts = array();
+  
+  // Go through each post
+  foreach( $postList as $post ) {
+  	
+  	// Load post file and attach contents to $content
+  	$postFile = $post.'/post.md';
+  	$file = fopen($postFile, 'r');
+  	$content = fread($file, filesize($postFile));
+  	fclose($file);
+  
+  	// Explosions! Explode the meta and assign the header
+  	$meta = explode('=-=-=', $content);
+  	
+  	foreach(parseMeta($meta[0]) as $key => $value){
+  	  $key = strtolower($key);
+  	  $page->$key = $value;
+  	}
+  	$tags = explode(',', $page->tags);
+  
+  	// Go through each of this posts tags
+  	foreach( $tags as $tag ) {
+  		// Lazy way to get post url
+  		$url = str_replace('categories/', '/', $post).'/';
+  		
+  		// If this post has the in-search tag
+  		if( trim(strtolower($tag)) === strtolower($search) ) {
+        if(isset($page->link)) { $url = $page->link; }
+  			$taggedPosts[$url] = $page->title;
+  			if(isset($page->link)) { unset($page->link); }
+  
+  		}
+  
+  	}
+  
+  }
+  
+  $taggedLength = count( $taggedPosts );
+  
+  $content = '<h1>'.$taggedLength.' tagged Posts for <em>'.$search.'</em> </h1>';
+  
+  	if( $taggedLength != 0 ) {
+  	  $content .= '<ul>';
+  		foreach( $taggedPosts as $key => $value ) {
+  		
+  			$content .= '<a href="'.$key.'">'.$value.'</a>'.'<br/>'."\n";
+  
+  		}
+  	  $content .= '</li>';
+  	} else {
+  		
+  		$content .= '<p>There are no posts with the the tag <em>'. $search.'.</p>';
+  
+  	}
+  	$page->title = 'Posts Tagged: '.$search;
+  	$page->contactme = 0;
+  	$page->content = $content;
+  	return $page;
+}
+
 function mimetype($ext){
 
   switch ($ext) {
@@ -203,6 +300,9 @@ function parseURL($slug,$site,$file=''){
     header('Content-type: '.$mimetype);
     include 'categories'.$site->query;
     die;
+  } elseif($slug[0] == 'tag' && isset($slug[1]) && $slug[1] != ''){
+    $site->tag = 1;
+    return getTags($slug[1],$site);
   } elseif($slug[0] == 'feed'){
     return generateFeed($site);
   } elseif($slug[0] == 'sitemap.xml') {
@@ -323,6 +423,21 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
 
   if(!isset($site->page) || !$site->page){
     $content = str_ireplace("<!--[TimeStamp]-->", '<p class="timestamp">'.(isset($site->date->format->before) ? $site->date->format->before : '').'<time datetime="'.formatDate($page->pubdate,'c').'">'.formatDate($page->pubdate,$site->date->format->structure).'</time>'.(isset($site->date->format->after) ? str_replace("<!--[Author]-->",$author,$site->date->format->after) : '').'</p>', $content);
+    if(!isset($site->page) || !$site->page){
+      // Tagging plx
+      $tagsBoom = explode(',', $page->tags);
+      $tags = '';
+      foreach ($tagsBoom as $singleTag) {
+        if($tags != ''){ $tags .= ', '; }
+        if($singleTag != ''){
+          $tags .= '<a href="/tag/'.urlencode(trim($singleTag)).'/">'.trim($singleTag).'</a>';
+        }
+      }
+      if($tags != ''){
+        $page->parsedTags = '<p class="tags">Tagged with: '.$tags.'</p>';
+        $content = str_replace('[[tags]]',$page->parsedTags,$content);
+      }
+    }
     if(!$break){
       $content = str_replace("<time ", "<time pubdate ", $content);
     }

@@ -12,7 +12,7 @@ $site->cachefile = 'cache/'.str_replace("/","-",substr($site->query, 1, -1)).'.h
 if($site->cachefile == "cache/.html"){
   $site->cachefile = "cache/home.html";
 }
-if(isset($site->noindex)){
+if(isset($site->noindex) || isset($site->category) && $site->category || isset($site->tag) && $site->tag){
   $cachetime = 60 * 60;  //  1 Hour Cache
 }
 
@@ -51,10 +51,10 @@ if(isset($page->noindex)){
 include 'themes/'.$site->theme.'/header.php';
 echo $page->content;
 
-if($site->comments != 'none' && !isset($site->error) && !isset($page->noindex) && !isset($page->nocomments) && !$site->page){
+if($site->comments != 'none' && !isset($site->error) && !isset($page->noindex) && !isset($page->nocomments) && !$site->page && !in_array($site->slug[0], $site->nocomments)){
   include 'assets/php/comments.php';
 }
-if(isset($page->contactme)){
+if(isset($page->contactme) && $page->contactme){
   include 'assets/php/contact.php';
 }
 

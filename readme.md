@@ -124,6 +124,10 @@ I am currently working on a new theme, entitled `basic` that is aimed at being u
 
 New in the latest series of updates is the ability to force file downloads. Any files you want users to download can now be stored in the `media` folder. To link to them, and force the download, link to `force-download/[filename]`. Wee_ will work out what needs to be done, and start the download process.
 
+###Post Tags
+
+If you include `[[tags]]` in the content.php of your theme then tags for posts in categories will be added to the post. Tags are taken from the meta area in the post.
+
 ##Problems
 
 If you run into any issues please get in touch with me via [Twitter][4] or [email][5] and I'll see what can be done to resolve your issues. One of the perks of testing things... is sometimes they break.
