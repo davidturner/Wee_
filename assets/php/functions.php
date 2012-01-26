@@ -435,10 +435,10 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
       }
       if($tags != ''){
         $page->parsedTags = '<p class="tags">Tagged with: '.$tags.'</p>';
-        $content = str_replace('[[tags]]',$page->parsedTags,$content);
       } else {
         $page->parsedTags = '';
       }
+      $content = str_replace('[[tags]]',$page->parsedTags,$content);
     }
     if(!$break){
       $content = str_replace("<time ", "<time pubdate ", $content);
