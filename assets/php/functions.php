@@ -71,7 +71,12 @@ function getTags($search,$site){
   foreach ($journeyDirectory as $category) {
     //echo $category;
     if(!in_array($category, $site->nofeed)){
-      $cat = scandir( $path.'/'.$category );
+      //$cat = scandir( $path.'/'.$category );
+      if(file_exists($path.'/'.$category.'/index.'.$site->ext)){
+        $cat = preg_split( '/\r\n|\r|\n/', file_get_contents($path.'/'.$category.'/index.'.$site->ext));
+      }else{
+        $cat=scandir($file, 1);
+      }
       foreach ($cat as $post) {
         if($post != '.' && $post != '..'){
           $dirArray[] = $category.'/'.$post;
@@ -102,7 +107,7 @@ function getTags($search,$site){
   foreach( $postList as $post ) {
   	
   	// Load post file and attach contents to $content
-  	$postFile = $post.'/post.md';
+  	$postFile = $post.'/post.'.$site->ext;
   	$file = fopen($postFile, 'r');
   	$content = fread($file, filesize($postFile));
   	fclose($file);
@@ -154,6 +159,107 @@ function getTags($search,$site){
   	$page->contactme = 0;
   	$page->content = $content;
   	return $page;
+}
+
+function getArchive($site){
+  $page->noindex = 1;
+  // Wee_ Article path
+  $path = 'categories';
+  
+  // Open the article path of the Journal
+  $journeyDirectory = scandir( $path );
+  
+  foreach ($journeyDirectory as $category) {
+    if(!in_array($category, $site->nofeed)){
+      if(file_exists($path.'/'.$category.'/index.'.$site->ext)){
+        $cat = preg_split( '/\r\n|\r|\n/', file_get_contents($path.'/'.$category.'/index.'.$site->ext));
+      }else{
+        $cat=scandir($file, 1);
+      }
+      foreach ($cat as $post) {
+        if($post != '.' && $post != '..'){
+          $dirArray[] = $category.'/'.$post;
+        }
+      }
+    }
+  }
+  
+  // Count elements in array
+  $indexLength = count( $dirArray );
+  
+  // Sort them
+  sort($dirArray);
+  
+  // Loop through the array of files and stack directories ( the posts ) only
+  for($i=0; $i < $indexLength; $i++) {
+  	
+  	if( is_dir( $path.'/'.$dirArray[$i] ) ) {
+  		
+  		$postList[] = $path.'/'.$dirArray[$i];
+  		
+  	}
+  }
+  
+  $archive = array();
+  
+  // Go through each post
+  foreach( $postList as $post ) {
+  	
+  	// Load post file and attach contents to $content
+  	$postFile = $post.'/post.'.$site->ext;
+  	$file = fopen($postFile, 'r');
+  	$content = fread($file, filesize($postFile));
+  	fclose($file);
+  
+  	// Explosions! Explode the meta and assign the header
+  	$meta = explode('=-=-=', $content);
+  	
+  	foreach(parseMeta($meta[0]) as $key => $value){
+  	  $key = strtolower($key);
+  	  $page->$key = $value;
+  	}
+  	$time = strtotime($page->pubdate);
+    $url = str_replace('categories/', '/', $post).'/';
+    if(isset($page->link)) { $url = $page->link; }
+    $archive[$time]['title'] = $page->title;
+    $archive[$time]['link'] = $url;
+    if(isset($page->link)) { unset($page->link); }
+  
+  }
+  
+  krsort($archive);
+  
+  $year = '';
+  $month = '';
+  $list = '';
+  $div = '';
+  
+  $content = '<h1>Site Archives</h1>';
+  foreach ($archive as $key => $value) {
+    if(date('Y', $key) != $year){
+      if($list != ''){ $content .= '</ul>'."\n"; $list = ''; }
+      if($div != ''){ $content .= '</div>'."\n"; $div = ''; }
+      $year = date('Y', $key);
+      $month = '';
+      //$content .= '<h1>'.date('Y', $key).'</h1>'."\n";
+    }
+    if(date('F', $key) != $month){
+      $month = date('F', $key);
+      if($list != ''){ $content .= '</ul>'."\n"; $list = ''; }
+      if($div != ''){ $content .= '</div>'."\n"; $div = ''; }
+      $div = 1;
+      $content .= '<div>'."\n";
+      $content .= '<h2>'.date('F', $key).' '.$year.'</h2>'."\n";
+      $list = 1;
+      $content .= '<ul>'."\n";
+    }
+    $content .= '<li><a href="'.$value['link'].'">'.$value['title'].'</a></li>'."\n";
+  }
+  
+  $page->title = 'Post Archive';
+  $page->content = $content;
+  unset($page->author);
+  return $page;
 }
 
 function mimetype($ext){
@@ -300,6 +406,9 @@ function parseURL($slug,$site,$file=''){
     header('Content-type: '.$mimetype);
     include 'categories'.$site->query;
     die;
+  } elseif($slug[0] == 'archive'){
+    $site->noindex = 1;
+    return getArchive($site);
   } elseif($slug[0] == 'tag' && isset($slug[1]) && $slug[1] != ''){
     $site->tag = 1;
     return getTags($slug[1],$site);

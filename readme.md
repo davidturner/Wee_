@@ -126,11 +126,23 @@ New in the latest series of updates is the ability to force file downloads. Any 
 
 ###Post Tags
 
-If you include `[[tags]]` in the content.php of your theme then tags for posts in categories will be added to the post. Tags are taken from the meta area in the post.
+If you include `[[tags]]` in the content.php of your theme, or place `<!--[tags]-->` in posts, then tags will be added to the post. Tags are taken from the meta area in the post.
+
+###Post Archive
+
+A new page has been created, as a way to list all posts on your site. The page `/archive/` will list all published posts available on the site from newest to oldest, broken into monthly sections.
 
 ##Problems
 
 If you run into any issues please get in touch with me via [Twitter][4] or [email][5] and I'll see what can be done to resolve your issues. One of the perks of testing things... is sometimes they break.
+
+##Credits
+
+Some of the recent features in Wee_ wouldn't have been possible without the help of a few other people along the way. These ideas, and the people behind them, are:
+
+- Force Downloads idea by [Tami Olsen][]
+- Post Tags concepted by [Chris Grant][]
+- Archive concepted by [Colm Morgan][]
 
 [1]: http://uni.davidturner.name
 [2]: http://davidturner.name
@@ -147,3 +159,7 @@ If you run into any issues please get in touch with me via [Twitter][4] or [emai
 
 [Markdown]: http://daringfireball.net/projects/markdown/
 [Markdown Extra]: http://michelf.com/projects/php-markdown/extra/
+
+[Tami Olsen]: https://twitter.com/keilantra
+[Chris Grant]: https://twitter.com/duckbox
+[Colm Morgan]: https://twitter.com/carmat71
