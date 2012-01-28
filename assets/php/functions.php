@@ -456,6 +456,7 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
     $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'$2"',$content);
   }
   
+  $content = str_replace('[[tags]]', '', $content);
   $page->content = $content;
   return $page;
 }
