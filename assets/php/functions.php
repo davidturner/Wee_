@@ -423,6 +423,11 @@ function parseURL($slug,$site,$file=''){
     $page = parseFile('categories/'.$slug[0].'/'.$slug[1].'/post.'.$site->ext,$site);
     include 'categories/'.$slug[0].'/'.$slug[1].'/index.php';
     die;
+  } elseif(!isset($slug[1]) && isset($slug[0]) && is_dir('categories/pages/'.$slug[0]) && file_exists('categories/pages/'.$slug[0].'/index.php')){
+    $site->page = 0;
+    $page = parseFile('categories/pages/'.$slug[0].'/post.'.$site->ext,$site);
+    include 'categories/pages/'.$slug[0].'/index.php';
+    die;
   } elseif(!isset($slug[2]) && isset($slug[1]) && is_dir('categories/'.$slug[0].'/'.$slug[1])){
     $site->page = 0;
     return parseFile('categories/'.$slug[0].'/'.$slug[1].'/post.'.$site->ext,$site);
@@ -548,6 +553,7 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
         $page->parsedTags = '';
       }
       $content = str_replace('[[tags]]',$page->parsedTags,$content);
+      $content = str_replace('<!--[tags]-->',$page->parsedTags,$content);
     }
     if(!$break){
       $content = str_replace("<time ", "<time pubdate ", $content);
@@ -566,6 +572,7 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
   }
   
   $content = str_replace('[[tags]]', '', $content);
+  $content = str_replace('<!--[tags]-->', '', $content);
   $page->content = $content;
   return $page;
 }
