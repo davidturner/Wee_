@@ -559,12 +559,12 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
       $content = str_replace("<time ", "<time pubdate ", $content);
     }
   }
-  if($site->page){
+  if(isset($site->page) && $site->page){
     $content = str_replace('href="/', 'href="'.$site->url.'/', 
                str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.'#',
                $content));
     $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.'$2"',$content);
-  } else {
+  } elseif(isset($site->slug[1])) {
     $content = str_replace('href="/', 'href="'.$site->url.'/', 
                str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'#',
                $content));
