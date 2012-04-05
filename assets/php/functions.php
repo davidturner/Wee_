@@ -64,10 +64,10 @@ function getTags($search,$site){
   // Wee_ Article path
   $path = 'categories';
   $search = urldecode($search);
-  
+
   // Open the article path of the Journal
   $journeyDirectory = scandir( $path );
-  
+
   foreach ($journeyDirectory as $category) {
     //echo $category;
     if(!in_array($category, $site->nofeed)){
@@ -84,76 +84,76 @@ function getTags($search,$site){
       }
     }
   }
-  
+
   // Count elements in array
   $indexLength = count( $dirArray );
-  
+
   // Sort them
   sort($dirArray);
-  
+
   // Loop through the array of files and stack directories ( the posts ) only
   for($i=0; $i < $indexLength; $i++) {
-  	
+
   	if( is_dir( $path.'/'.$dirArray[$i] ) ) {
-  		
+
   		$postList[] = $path.'/'.$dirArray[$i];
-  		
+
   	}
   }
-  
+
   $taggedPosts = array();
-  
+
   // Go through each post
   foreach( $postList as $post ) {
-  	
+
   	// Load post file and attach contents to $content
   	$postFile = $post.'/post.'.$site->ext;
   	$file = fopen($postFile, 'r');
   	$content = fread($file, filesize($postFile));
   	fclose($file);
-  
+
   	// Explosions! Explode the meta and assign the header
   	$meta = explode('=-=-=', $content);
-  	
+
   	foreach(parseMeta($meta[0]) as $key => $value){
   	  $key = strtolower($key);
   	  $page->$key = $value;
   	}
   	$tags = explode(',', $page->tags);
-  
+
   	// Go through each of this posts tags
   	foreach( $tags as $tag ) {
   		// Lazy way to get post url
   		$url = str_replace('categories/', '/', $post).'/';
-  		
+
   		// If this post has the in-search tag
   		if( trim(strtolower($tag)) === strtolower($search) ) {
         if(isset($page->link)) { $url = $page->link; }
   			$taggedPosts[$url] = $page->title;
   			if(isset($page->link)) { unset($page->link); }
-  
+
   		}
-  
+
   	}
-  
+
   }
-  
+
   $taggedLength = count( $taggedPosts );
-  
+
   $content = '<h1>'.$taggedLength.' tagged Posts for <em>'.$search.'</em> </h1>';
-  
+
   	if( $taggedLength != 0 ) {
   	  $content .= '<ul>';
   		foreach( $taggedPosts as $key => $value ) {
-  		
+
   			$content .= '<a href="'.$key.'">'.$value.'</a>'.'<br/>'."\n";
-  
+
   		}
   	  $content .= '</li>';
   	} else {
-  		
+
   		$content .= '<p>There are no posts with the the tag <em>'. $search.'.</p>';
-  
+
   	}
   	$page->title = 'Posts Tagged: '.$search;
   	$page->contactme = 0;
@@ -165,10 +165,10 @@ function getArchive($site){
   $page->noindex = 1;
   // Wee_ Article path
   $path = 'categories';
-  
+
   // Open the article path of the Journal
   $journeyDirectory = scandir( $path );
-  
+
   foreach ($journeyDirectory as $category) {
     if(!in_array($category, $site->nofeed)){
       if(file_exists($path.'/'.$category.'/index.'.$site->ext)){
@@ -183,37 +183,37 @@ function getArchive($site){
       }
     }
   }
-  
+
   // Count elements in array
   $indexLength = count( $dirArray );
-  
+
   // Sort them
   sort($dirArray);
-  
+
   // Loop through the array of files and stack directories ( the posts ) only
   for($i=0; $i < $indexLength; $i++) {
-  	
+
   	if( is_dir( $path.'/'.$dirArray[$i] ) ) {
-  		
+
   		$postList[] = $path.'/'.$dirArray[$i];
-  		
+
   	}
   }
-  
+
   $archive = array();
-  
+
   // Go through each post
   foreach( $postList as $post ) {
-  	
+
   	// Load post file and attach contents to $content
   	$postFile = $post.'/post.'.$site->ext;
   	$file = fopen($postFile, 'r');
   	$content = fread($file, filesize($postFile));
   	fclose($file);
-  
+
   	// Explosions! Explode the meta and assign the header
   	$meta = explode('=-=-=', $content);
-  	
+
   	foreach(parseMeta($meta[0]) as $key => $value){
   	  $key = strtolower($key);
   	  $page->$key = $value;
@@ -224,16 +224,16 @@ function getArchive($site){
     $archive[$time]['title'] = $page->title;
     $archive[$time]['link'] = $url;
     if(isset($page->link)) { unset($page->link); }
-  
+
   }
-  
+
   krsort($archive);
-  
+
   $year = '';
   $month = '';
   $list = '';
   $div = '';
-  
+
   $content = '<h1>Site Archives</h1>';
   foreach ($archive as $key => $value) {
     if(date('Y', $key) != $year){
@@ -255,7 +255,7 @@ function getArchive($site){
     }
     $content .= '<li><a href="'.$value['link'].'">'.$value['title'].'</a></li>'."\n";
   }
-  
+
   $page->title = 'Post Archive';
   $page->content = $content;
   unset($page->author);
@@ -378,7 +378,7 @@ function parseURL($slug,$site,$file=''){
   if(isset($slug[1]) && $slug[1] == 'post.'.substr($site->ext,0,-1)){
     $slug[1] = 'post.'.$site->ext;
   }
-  
+
   $ext = explode('.', end($slug));
   if(end($ext) != end($slug)){
     for ($i = 0; $i < count($ext) - 1; $i++) {
@@ -388,7 +388,7 @@ function parseURL($slug,$site,$file=''){
     $slugcount = count($slug)-1;
     $slug[$slugcount] = $file;
   }
-  
+
   if($slug[0] == 'favicon.ico' && file_exists('assets/default/favicon.ico')){
     $mimetype = mimetype('ico');
     header('Content-type: '.$mimetype);
@@ -450,7 +450,7 @@ function parseURL($slug,$site,$file=''){
     header('Content-type: '.$mimetype);
     #header("Content-Type: application/zip");
     header("Content-Transfer-Encoding: binary");
-    
+
     // Read the file from disk
     readfile('media/'.$slug[1]);die;
   } else {
@@ -517,13 +517,13 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
     header('Location: '.$page->link);
     die;
   }
-  
+
   if(isset($page->author)){
     $author = $page->author;
   } else {
     $author = $site->author->name;
   }
-  
+
   if(isset($include->before) && !$break){
     $display .= $include->before;
   }
@@ -531,7 +531,7 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
   if(isset($include->after) && !$break){
     $display .= $include->after;
   }
-  
+
   $content = str_replace('[[content]]', $display, $template);
   $content = str_replace('[[slug]]', (isset($site->slug[1]) ? $site->slug[1] : $site->slug[0]), $content);
 
@@ -554,23 +554,30 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
       }
       $content = str_replace('[[tags]]',$page->parsedTags,$content);
       $content = str_replace('<!--[tags]-->',$page->parsedTags,$content);
+      $content = preg_replace('/<p>\s*(<a .*>)?\s*(<img .* \/>)\s*(<\/a>)?\s*<\/p>/iU', '\1\2\3', $content);
     }
     if(!$break){
       $content = str_replace("<time ", "<time pubdate ", $content);
     }
   }
   if(isset($site->page) && $site->page){
-    $content = str_replace('href="/', 'href="'.$site->url.'/', 
+    $content = str_replace('href="/', 'href="'.$site->url.'/',
                str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.'#',
                $content));
     $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.'$2"',$content);
   } elseif(isset($site->slug[1])) {
-    $content = str_replace('href="/', 'href="'.$site->url.'/', 
+    $content = str_replace('href="/', 'href="'.$site->url.'/',
                str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'#',
                $content));
     $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'$2"',$content);
+  } else {
+    $site->post = str_replace('categories/'.$site->slug[0].'/', '', $folder);
+    $content = str_replace('href="/', 'href="'.$site->url.'/',
+               str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.$site->post.'/'.'#',
+               $content));
+    $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.$site->post.''.'$2"',$content);
   }
-  
+
   $content = str_replace('[[tags]]', '', $content);
   $content = str_replace('<!--[tags]-->', '', $content);
   $page->content = $content;
@@ -584,7 +591,7 @@ function loadCategory($file,$site){
     $curpage = 1;
   }
   $page->noindex = 1;
-  
+
   if(file_exists($file.'index.'.$site->ext)){
     $posts = preg_split( '/\r\n|\r|\n/', file_get_contents($file.'index.'.$site->ext));
   }else{
@@ -595,12 +602,12 @@ function loadCategory($file,$site){
   $content = '';
   $check = 1;
   $count = 0;
-  
+
   $start = (($curpage * $site->posts->page) - ($site->posts->page))+1;
   $end=$curpage * $site->posts->page;
-  
+
   foreach ($posts as $post) {
-    if(!in_array($post, array('.', '..', '.DS_Store', 'index.'.$site->ext)) && file_exists($file.$post.'/post.'.$site->ext) && 
+    if(!in_array($post, array('.', '..', '.DS_Store', 'index.'.$site->ext)) && file_exists($file.$post.'/post.'.$site->ext) &&
      $check >= $start && $check <= $end){
       $content .= parseFile($file.$post.'/post.'.$site->ext,$site,1)->content;
     }

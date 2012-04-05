@@ -1,5 +1,5 @@
 <?php header("Content-Type: application/xml; charset=UTF-8");?>
-<?php 
+<?php
 
 $site->cachefile = 'cache/'.str_replace("/","-",substr($site->query, 1, -1)).'.xml';
 $cachetime = 60 * 60 * 4;  // 4 Hour Cache
@@ -18,7 +18,7 @@ if($site->cache->active && !isset($site->error)){
 
 ?>
 <?php
-echo '<?xml version="1.0" encoding="UTF-8"?>';   
+echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>
 <rss version="2.0"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -31,7 +31,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <channel>
 	<title><?php echo $site->title; ?></title>
 	<atom:link href="<?php echo $site->url; ?>/feed/" rel="self" type="application/rss+xml" />
-	<link><?php echo $site->url; ?>/</link>    
+	<link><?php echo $site->url; ?>/</link>
 	<description><?php echo $site->desc; ?></description>
 	<language>en</language>
 	<sy:updatePeriod>daily</sy:updatePeriod>
@@ -40,17 +40,20 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 
 <?php
-$xml = array();                                                                                                                           
+$xml = array();
 $folders = scandir('categories');
 foreach ($folders as $folder) {
   if(!in_array($folder, $site->nofeed)){
-    //echo $folder;
+    // echo $folder;die;
+    $loc = explode('/', $folder);
+    //print_r($loc);die;
     if(file_exists('categories/'.$folder.'/index.'.$site->ext)){
       $posts = preg_split( '/\r\n|\r|\n/', file_get_contents('categories/'.$folder.'/index.'.$site->ext));
     } else {
       $posts = scandir('categories/'.$folder);
     }
     foreach ($posts as $post) {
+      //echo $site->url;die;
       $file = 'categories/'.$folder.'/'.$post.'/post.md';
       if(file_exists($file)){
         $postData = parseFile($file,$site,0,0);
@@ -60,10 +63,11 @@ foreach ($folders as $folder) {
         $postData->content = str_replace('<article class="feed">', '',
                              str_replace('</article>','',
                                                   str_replace('feed//',$folder.'/'.$post.'/',
-                             str_replace('href="/', 'href="'.$site->url.'/', 
-                             str_replace('href="#', 'href="'.$site->url.'/'.$folder.'/'.$post.'/'.'#', 
+                             str_replace('href="/', 'href="'.$site->url.'/',
+                             str_replace('href="#', 'href="'.$site->url.'/'.$folder.'/'.$post.'/'.'#',
                              $postData->content)))));
         $postData->content=preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$folder.'/'.$post.'/'.'$2"',$postData->content);
+        $postData->content = str_replace('feed/categories/', '', $postData->content);
         $xml[strtotime($postData->pubdate)] = '<item>'."\n\t".'<title>'.str_replace("& ","&amp; ", $postData->title).'</title>'."\n\t".'<link>'.$postData->link.'</link>'."\n\t".'<pubDate>'.date('r',strtotime($postData->pubdate)).'</pubDate>'."\n\t".'<dc:creator>'.$site->author->name.'</dc:creator>'."\n\t"."\n\t".'<description><![CDATA['.$postData->content.']]></description><content:encoded><![CDATA['.$postData->content.']]></content:encoded><guid>'.$postData->link.'</guid>'."\n".'</item>';
       }
     }
