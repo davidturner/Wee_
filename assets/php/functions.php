@@ -120,6 +120,7 @@ function getTags($search,$site){
       $page->$key = $value;
     }
     $tags = explode(',', $page->tags);
+              if(isset($page->link)) { $url = $page->link; }
 
     // Go through each of this posts tags
     foreach( $tags as $tag ) {
@@ -128,11 +129,9 @@ function getTags($search,$site){
 
       // If this post has the in-search tag
       if( trim(strtolower($tag)) === strtolower($search) ) {
-        if(isset($page->link)) { $url = $page->link; }
         $taggedPosts[$url] = $page->title;
-        if(isset($page->link)) { unset($page->link); }
-
       }
+        if(isset($page->link)) { unset($page->link); }
 
     }
 
@@ -143,6 +142,7 @@ function getTags($search,$site){
   $content = '<h1>'.$taggedLength.' tagged Posts for <em>'.$search.'</em> </h1>';
 
     if( $taggedLength != 0 ) {
+      //print_r($taggedPosts);
       $content .= '<ul>';
       foreach( $taggedPosts as $key => $value ) {
 
