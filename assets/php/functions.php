@@ -139,7 +139,13 @@ function getTags($search,$site){
 
   $taggedLength = count( $taggedPosts );
 
-  $content = '<h1>'.$taggedLength.' tagged Posts for <em>'.$search.'</em> </h1>';
+  if($taggedLength > 1 || $taggedLength < 1){
+    $content = '<h1>'.$taggedLength.' tagged Posts for <em>'.$search.'</em> </h1>';
+  } else {
+    $content = '<h1>'.$taggedLength.' tagged Post for <em>'.$search.'</em> </h1>';
+  }
+
+  #$content = '<h1>'.$taggedLength.' tagged Posts for <em>'.$search.'</em> </h1>';
 
     if( $taggedLength != 0 ) {
       //print_r($taggedPosts);
