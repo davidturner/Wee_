@@ -94,11 +94,11 @@ function getTags($search,$site){
   // Loop through the array of files and stack directories ( the posts ) only
   for($i=0; $i < $indexLength; $i++) {
 
-  	if( is_dir( $path.'/'.$dirArray[$i] ) ) {
+    if( is_dir( $path.'/'.$dirArray[$i] ) ) {
 
-  		$postList[] = $path.'/'.$dirArray[$i];
+      $postList[] = $path.'/'.$dirArray[$i];
 
-  	}
+    }
   }
 
   $taggedPosts = array();
@@ -106,35 +106,35 @@ function getTags($search,$site){
   // Go through each post
   foreach( $postList as $post ) {
 
-  	// Load post file and attach contents to $content
-  	$postFile = $post.'/post.'.$site->ext;
-  	$file = fopen($postFile, 'r');
-  	$content = fread($file, filesize($postFile));
-  	fclose($file);
+    // Load post file and attach contents to $content
+    $postFile = $post.'/post.'.$site->ext;
+    $file = fopen($postFile, 'r');
+    $content = fread($file, filesize($postFile));
+    fclose($file);
 
-  	// Explosions! Explode the meta and assign the header
-  	$meta = explode('=-=-=', $content);
+    // Explosions! Explode the meta and assign the header
+    $meta = explode('=-=-=', $content);
 
-  	foreach(parseMeta($meta[0]) as $key => $value){
-  	  $key = strtolower($key);
-  	  $page->$key = $value;
-  	}
-  	$tags = explode(',', $page->tags);
+    foreach(parseMeta($meta[0]) as $key => $value){
+      $key = strtolower($key);
+      $page->$key = $value;
+    }
+    $tags = explode(',', $page->tags);
 
-  	// Go through each of this posts tags
-  	foreach( $tags as $tag ) {
-  		// Lazy way to get post url
-  		$url = str_replace('categories/', '/', $post).'/';
+    // Go through each of this posts tags
+    foreach( $tags as $tag ) {
+      // Lazy way to get post url
+      $url = str_replace('categories/', '/', $post).'/';
 
-  		// If this post has the in-search tag
-  		if( trim(strtolower($tag)) === strtolower($search) ) {
+      // If this post has the in-search tag
+      if( trim(strtolower($tag)) === strtolower($search) ) {
         if(isset($page->link)) { $url = $page->link; }
-  			$taggedPosts[$url] = $page->title;
-  			if(isset($page->link)) { unset($page->link); }
+        $taggedPosts[$url] = $page->title;
+        if(isset($page->link)) { unset($page->link); }
 
-  		}
+      }
 
-  	}
+    }
 
   }
 
@@ -142,23 +142,23 @@ function getTags($search,$site){
 
   $content = '<h1>'.$taggedLength.' tagged Posts for <em>'.$search.'</em> </h1>';
 
-  	if( $taggedLength != 0 ) {
-  	  $content .= '<ul>';
-  		foreach( $taggedPosts as $key => $value ) {
+    if( $taggedLength != 0 ) {
+      $content .= '<ul>';
+      foreach( $taggedPosts as $key => $value ) {
 
-  			$content .= '<a href="'.$key.'">'.$value.'</a>'.'<br/>'."\n";
+        $content .= '<a href="'.$key.'">'.$value.'</a>'.'<br/>'."\n";
 
-  		}
-  	  $content .= '</li>';
-  	} else {
+      }
+      $content .= '</li>';
+    } else {
 
-  		$content .= '<p>There are no posts with the the tag <em>'. $search.'.</p>';
+      $content .= '<p>There are no posts with the the tag <em>'. $search.'.</p>';
 
-  	}
-  	$page->title = 'Posts Tagged: '.$search;
-  	$page->contactme = 0;
-  	$page->content = $content;
-  	return $page;
+    }
+    $page->title = 'Posts Tagged: '.$search;
+    $page->contactme = 0;
+    $page->content = $content;
+    return $page;
 }
 
 function getArchive($site){
@@ -193,11 +193,11 @@ function getArchive($site){
   // Loop through the array of files and stack directories ( the posts ) only
   for($i=0; $i < $indexLength; $i++) {
 
-  	if( is_dir( $path.'/'.$dirArray[$i] ) ) {
+    if( is_dir( $path.'/'.$dirArray[$i] ) ) {
 
-  		$postList[] = $path.'/'.$dirArray[$i];
+      $postList[] = $path.'/'.$dirArray[$i];
 
-  	}
+    }
   }
 
   $archive = array();
@@ -205,20 +205,20 @@ function getArchive($site){
   // Go through each post
   foreach( $postList as $post ) {
 
-  	// Load post file and attach contents to $content
-  	$postFile = $post.'/post.'.$site->ext;
-  	$file = fopen($postFile, 'r');
-  	$content = fread($file, filesize($postFile));
-  	fclose($file);
+    // Load post file and attach contents to $content
+    $postFile = $post.'/post.'.$site->ext;
+    $file = fopen($postFile, 'r');
+    $content = fread($file, filesize($postFile));
+    fclose($file);
 
-  	// Explosions! Explode the meta and assign the header
-  	$meta = explode('=-=-=', $content);
+    // Explosions! Explode the meta and assign the header
+    $meta = explode('=-=-=', $content);
 
-  	foreach(parseMeta($meta[0]) as $key => $value){
-  	  $key = strtolower($key);
-  	  $page->$key = $value;
-  	}
-  	$time = strtotime($page->pubdate);
+    foreach(parseMeta($meta[0]) as $key => $value){
+      $key = strtolower($key);
+      $page->$key = $value;
+    }
+    $time = strtotime($page->pubdate);
     $url = str_replace('categories/', '/', $post).'/';
     if(isset($page->link)) { $url = $page->link; }
     $archive[$time]['title'] = $page->title;
@@ -542,13 +542,22 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
       $tagsBoom = explode(',', $page->tags);
       $tags = '';
       foreach ($tagsBoom as $singleTag) {
-        if($tags != ''){ $tags .= ', '; }
+        if($tags != ''){
+          if($site->tag->divider !== ''){
+            $tags .= '<li class="divider">'.$site->tag->divider.'</li>';
+          }
+        }
         if($singleTag != ''){
-          $tags .= '<a href="/tag/'.urlencode(trim($singleTag)).'/">'.trim($singleTag).'</a>';
+          $tags .= '<li><a class="tag-'.strtolower(str_replace('+','-',urlencode(trim($singleTag)))).'" href="/tag/'.urlencode(trim($singleTag)).'/">'.trim($singleTag).'</a></li>';
         }
       }
       if($tags != ''){
-        $page->parsedTags = '<p class="tags">Tagged with: '.$tags.'</p>';
+        if($site->tag->intro !== ''){
+          $intro = '<li>'.$site->tag->intro.'</li>';
+        } else {
+          $intro = '';
+        }
+        $page->parsedTags = '<ul class="tags">'.$intro.$tags.'</ul>';
       } else {
         $page->parsedTags = '';
       }

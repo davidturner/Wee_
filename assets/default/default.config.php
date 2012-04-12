@@ -18,6 +18,9 @@ $site->tags = ''; # Default Site Tags
 $site->posts->page = 5; # Posts Per Page
 $site->posts->feed = 20; #Posts in RSS Feed
 
+$site->tag->intro = 'Tagged With: ';
+$site->tag->divider = ', ';
+
 $site->cache->active = 0; # [1|0] 1 = cache site content
 
 $site->closecomments = 0; # [1|0] 1 closes comments across the site

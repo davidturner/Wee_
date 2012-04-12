@@ -24,13 +24,13 @@ if(isset($site->slug[1]) && file_exists('categories/'.$site->slug[0].'/'.$site->
   $file = "categories/".$site->slug[0];
 }
 // Serve from the cache if it is younger than $cachetime, and a newer version of the page doesn't exist
-if ($site->cache->active && file_exists($site->cachefile) && filemtime($file) < filemtime($site->cachefile) && $site->cache->active && !isset($_POST["important-input"]) || isset($cachetime) && time() - $cachetime < filemtime($site->cachefile)) {
+if ($site->cache->active && file_exists($site->cachefile) && filemtime($file) < @filemtime($site->cachefile) && $site->cache->active && !isset($_POST["important-input"]) || isset($cachetime) && time() - $cachetime < @filemtime($site->cachefile)) {
     include($site->cachefile);
     echo "<!-- Cached copy, generated ".date('r', filemtime($site->cachefile))." by Wee_ CMS -->\n";
     exit;
 }
 
-if($site->slug[0] == '' && !$site->redir){ 
+if($site->slug[0] == '' && !$site->redir){
   $site->slug[0] = $site->home;
 } elseif($site->slug[0] == '' && $site->redir) {
   header('Location: /'.$site->home.'/');
