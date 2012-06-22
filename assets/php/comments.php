@@ -1,7 +1,7 @@
 <?php
 if($site->akismet != ''){
   $WordPressAPIKey = $site->akismet;
-  $MyBlogURL = $site->url; 
+  $MyBlogURL = $site->url;
   $akismet = new Akismet($site->url ,$site->akismet);
 }
 
@@ -35,16 +35,17 @@ if($site->process){
   $akismet->setCommentAuthorURL($post["site-url"]);
   $akismet->setCommentContent($post["comment"]);
   $akismet->setPermalink($site->url.$site->query);
-  
+
   $finalcomment["name"] = strip_tags($post["name"]);
   $finalcomment["email"] = strip_tags($post["email"]);
-  $finalcomment["gravatar-url"] = "http://www.gravatar.com/avatar/".md5($finalcomment["email"]);
+  $finalcomment["gravatar-url"] = "http://www.gravatar.com/avatar/".md5($finalcomment["email"]).'?d='.urlencode( $site->url.'/avatars/unknown-commenter.png' );
+;
   $finalcomment["site-url"] = strip_tags($post["site-url"]);
   $finalcomment["comment"] = '<p>'.str_replace("\n\n", '</p><p>', $post["comment"]).'</p>';
   $finalcomment["comment"] = str_replace("\n", '<br />', $post["comment"]);
-  
+
   $finalcomment["comment"] = $md->parseString($finalcomment["comment"]);
-  
+
   if($akismet->isCommentSpam()){
     //  Probably Spam, but better to keep it just in case. Flag spam files in the naming structure too (spam.date.md)
     $finalcomment["flagged"] = "true";
@@ -54,7 +55,7 @@ if($site->process){
     $commentMsg = '<p class="comment-success">Your post has been successfully added. Check it out above.</p>';
     $site->purge = 'cache/'.str_replace("/","-",substr($site->query, 1, -1)).'.html';
   }
-  
+
   $time = time();
   $finalcomment["comment"] = str_replace("<","&lt;",str_replace(">", "&gt;", stripslashes($finalcomment["comment"])));
   $finalcomment["comment"] = str_replace('&lt;a', '<a', $finalcomment["comment"]);
@@ -82,7 +83,7 @@ if($site->process){
   $finalcomment["comment"] = str_replace('&lt;/cite&gt;', '</cite>', $finalcomment["comment"]);
   $finalcomment["comment"] = str_replace('&lt;q&gt;', '<q>', $finalcomment["comment"]);
   $finalcomment["comment"] = str_replace('&lt;/q&gt;', '</q>', $finalcomment["comment"]);
-  
+
   $fullcomment = "Comment Author: ".$finalcomment["name"]."\n";
   $fullcomment .= "Email: ".$finalcomment["email"]."\n";
   $fullcomment .= "Gravatar: ".$finalcomment["gravatar-url"]."\n";
@@ -92,7 +93,7 @@ if($site->process){
   $fullcomment .= "Flagged: ".$finalcomment["flagged"]."\n";
   $fullcomment .= "=-=-=\n";
   $fullcomment .= $finalcomment["comment"];
-  
+
   if($finalcomment["flagged"] == "true"){
     $file = $comments->dir."spam-".$time.".md";
   }else{
@@ -101,30 +102,30 @@ if($site->process){
   if($finalcomment["flagged"] == "true" && $site->comments == 'all' || $finalcomment["flagged"] == "false"){
     $handle = fopen($file, 'w') or die('Cannot open file:  '.$file);
     fwrite($handle, $fullcomment);
-    
+
       $commenttxt = "<h2>Comment submitted on your site!</h2><hr />";
     	$commenttxt .= "<p>Name: ".$finalcomment["name"]."<br />Email: ".$finalcomment["email"]."<br />Comment: </p>";
     	$commenttxt .= Markdown($finalcomment["comment"]);
     	$commenttxt .= '<p>You can view this comment on your site <a href="'.$site->url.$site->query.'#comment-'.$time.'">here</a>.</p>';
-    
+
     	$to      = $site->author->email;
     	$subject = "Comment posted by ".$finalcomment["name"];
     	$message = "<html><body>".$commenttxt."</body></html>";
-    	
-    	$headers  = 'From: '.$finalcomment["name"].' <'.$finalcomment["email"].'> '."\n"; 
+
+    	$headers  = 'From: '.$finalcomment["name"].' <'.$finalcomment["email"].'> '."\n";
     	$headers .= 'Reply-To: '.$finalcomment["email"].''."\n";
-    	$headers .= "MIME-Version: 1.0\n"; 
+    	$headers .= "MIME-Version: 1.0\n";
     	$headers .= "Content-Type: text/html; charset=ISO-8859-1\n";
     	$headers .= 'X-Mailer: PHP/' . phpversion();
-    	
+
     	mail($to, $subject, $message, $headers);
-    	
+
     	unlink($site->cachefile);
-    	
+
     	header('Location: '.$site->query.'#comment-'.$time);
     	die;
   }
-  
+
 }
 
 # If comments folder doesn't exist, make it. Make it naow!
@@ -160,7 +161,7 @@ foreach($comments->comments as $comment){
       if($singleComment["No-Follow"] == "true"){
         $singleComment["post"] = str_replace("<a ", '<a rel="nofollow" ', $singleComment["post"]);
       }
-      echo '<article class="comment" id="comment-'.$singleComment["Posted on"].'">'."\n";
+      echo '<article class="post-comment clearfix" id="comment-'.$singleComment["Posted on"].'">'."\n";
       echo '<img class="gravatar" src="'.$singleComment["Gravatar"].'" alt="'.$singleComment["Comment Author"].'\'s Avatar" />'."\n";
       echo '<div class="comment-content">'."\n";
       echo '<p>Comment by '.$commenter.' on <time datetime="'.date("c",$singleComment["Posted on"]).'">'.date('F \t\h\e jS, Y',$singleComment["Posted on"]).' at '.date("g:ia",$singleComment["Posted on"]).'</time></p>'."\n";
@@ -192,7 +193,7 @@ if(!isset($page->closecomments) && !$site->closecomments){ ?>
     <input type="url" id="site-url" name="site-url" placeholder="Your Site's URL..." value="<?php if(!$site->process){ echo $post["site-url"];} ?>" />
   </div>
   <div class="comment-message">
-    <label for="comment" class="comment-label">Your Comment (required):</label>
+    <label for="comment" class="comment-label">Your Comment (required, supports <a href="http://daringfireball.net/projects/markdown/syntax/">markdown</a> formatting):</label>
     <textarea name="comment" id="comment" cols="30" rows="10" placeholder="Your Comment..." required><?php if(!$site->process){ echo $post["comment"];} ?></textarea>
     <input type="submit" value="Add Comment" />
   </div>

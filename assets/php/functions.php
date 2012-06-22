@@ -20,9 +20,9 @@ function isFile($folder,$file) {
 function getComment($comment){
   $file=fopen($comment, 'r');
   $filecontent = fread($file, filesize($comment));
-  $sect = explode('=-=-=',$filecontent); // Seperates post metadata from content.
+  $sect = explode('=-=-=',$filecontent,2); // Seperates post metadata from content.
   $contentMeta = parseMeta($sect[0]);
-  $myHtml = Markdown($sect[1]);
+  $myHtml = /*Markdown(*/MarkdownExtended($sect[1]);
   $contentMeta["post"] = $myHtml; // Reorganises some of the elements of the site's HTML, cleaning up where markdown does weird things to code
   $link = explode('/', $comment);
   fclose($file);
@@ -48,7 +48,7 @@ function generatePaging($perPage, $total, $site, $current){
 function parseMeta($meta){
   $postmeta = explode("\n",$meta); // Gets individual meta fields.
   foreach ($postmeta as $meta) {
-    $topost = explode(': ',$meta);
+    $topost = explode(': ',$meta, 2);
     if($topost[0] != '' && isset($topost[1])){
       $contentMeta[$topost[0]] = $topost[1];
     } elseif($topost[0] != '') {
@@ -113,7 +113,7 @@ function getTags($search,$site){
     fclose($file);
 
     // Explosions! Explode the meta and assign the header
-    $meta = explode('=-=-=', $content);
+    $meta = explode('=-=-=', $content,2);
 
     foreach(parseMeta($meta[0]) as $key => $value){
       $key = strtolower($key);
@@ -218,7 +218,7 @@ function getArchive($site){
     fclose($file);
 
     // Explosions! Explode the meta and assign the header
-    $meta = explode('=-=-=', $content);
+    $meta = explode('=-=-=', $content,2);
 
     foreach(parseMeta($meta[0]) as $key => $value){
       $key = strtolower($key);
@@ -337,6 +337,12 @@ function mimetype($ext){
     case 'rar':
       return 'application/x-rar-compressed';
       break;
+    case 'json':
+      return 'application/json';
+      break;
+    case 'js':
+      return 'application/javascript';
+      break;
     default:
       return 'text/plain';
       break;
@@ -351,6 +357,7 @@ function extFix($ext){
     'pn' => 'png',
     'cs' => 'css',
     'j' => 'js',
+    'jso' => 'json',
     'sv' => 'svg',
     'zi' => 'zip',
     'htm' => 'html',
@@ -368,7 +375,8 @@ function extFix($ext){
     'm' => 'md',
     'tex' => 'text',
     'markdow' => 'markdown',
-    'mdow' => 'mdown'
+    'mdow' => 'mdown',
+    'ra' => 'rar'
   );
   if (isset($extensions[$ext])) {
     return $extensions[$ext];
@@ -474,6 +482,8 @@ function loadMarkdown($file){
 }
 
 function parseFile($file,$site,$break=0,$theme=1,$display = ''){
+  $chunks = explode('/',$file);
+  $thePost = $chunks[2].'/';
   $folder = str_replace('post.'.$site->ext, '', $file);
   $before = str_replace('post.'.$site->ext, 'include-before.php', $file);
   $after = str_replace('post.'.$site->ext, 'include-after.php', $file);
@@ -497,18 +507,18 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
     if(file_exists('themes/'.$site->theme.'/content.php')) {
       $template = file_get_contents('themes/'.$site->theme.'/content.php');
     } else {
-      $template = '<article class="[[slug]]">[[content]]</article>';
+      $template = '<article class="<!--[slug]-->"><!--[content]--></article>';
     }
   } else {
-    $template = '[[content]]';
+    $template = '<!--[content]-->';
   }
-  $segments = explode('=-=-=', file_get_contents($file));
+  $segments = explode('=-=-=', file_get_contents($file),2);
   foreach(parseMeta($segments[0]) as $key => $value){
     $key = strtolower($key);
     $page->$key = $value;
   }
   if($break && $site->more){
-    $post = Markdown($segments[1]);
+    $post = /*Markdown(*/MarkdownExtended($segments[1]);
     $post = explode('<!--[More]-->', $post);
     $contents = $post[0];
     if(isset($page->link)){
@@ -517,7 +527,7 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
       $contents .= '<a class="readmore" href="'.str_replace('categories', '', str_replace('post.'.$site->ext, '', $file)).'">'.$site->readmore.'</a>';
     }
   } else {
-    $contents = Markdown($segments[1]);
+    $contents = /*Markdown(*/MarkdownExtended($segments[1]);
   }
   if(isset($page->link) && $page->link != '' && !$break && $theme){
     header('Location: '.$page->link);
@@ -539,7 +549,9 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
   }
 
   $content = str_replace('[[content]]', $display, $template);
+  $content = str_replace('<!--[content]-->', $display, $template);
   $content = str_replace('[[slug]]', (isset($site->slug[1]) ? $site->slug[1] : $site->slug[0]), $content);
+  $content = str_replace('<!--[slug]-->', (isset($site->slug[1]) ? $site->slug[1] : $site->slug[0]), $content);
 
   if(!isset($site->page) || !$site->page){
     $content = str_ireplace("<!--[TimeStamp]-->", '<p class="timestamp">'.(isset($site->date->format->before) ? $site->date->format->before : '').'<time datetime="'.formatDate($page->pubdate,'c').'">'.formatDate($page->pubdate,$site->date->format->structure).'</time>'.(isset($site->date->format->after) ? str_replace("<!--[Author]-->",$author,$site->date->format->after) : '').'</p>', $content);
@@ -582,9 +594,10 @@ function parseFile($file,$site,$break=0,$theme=1,$display = ''){
     $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.'$2"',$content);
   } elseif(isset($site->slug[1])) {
     $content = str_replace('href="/', 'href="'.$site->url.'/',
-               str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'#',
+               str_replace('href="#', 'href="'.$site->url.'/'.$site->slug[0].'/'./*$site->slug[1].'/'.*/$thePost.'#',
                $content));
-    $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'.$site->slug[1].'/'.'$2"',$content);
+    $content = preg_replace('#(href|src)="([^:"]*)(?:")#','$1="'.$site->url.'/'.$site->slug[0].'/'./*$site->slug[1].'/'.*/$thePost.'$2"',$content);
+    $content = str_replace($site->url.'/'.$site->slug[0].'/'.$site->slug[1].'///', '//', $content);
   } else {
     $site->post = str_replace('categories/'.$site->slug[0].'/', '', $folder);
     $content = str_replace('href="/', 'href="'.$site->url.'/',

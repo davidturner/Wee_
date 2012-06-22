@@ -3,30 +3,54 @@ ob_start('ob_gzhandler');
 include 'assets/php/functions.php'; // php functions
 include 'assets/php/config.php'; // configuration
 include 'config.php';
-include "assets/php/Akismet.class.php";
+include 'assets/php/Akismet.class.php';
 include 'assets/php/markdown.php'; // markdown -> HTML
-include "assets/php/markdownify.php"; // HTML -> markdown
-include "assets/php/markdownify_extra.php"; // HTML -> markdown extra - uses markdownify
+include 'assets/php/markdown_extended.php'; // markdown -> HTML
+include 'assets/php/markdownify.php'; // HTML -> markdown
+include 'assets/php/markdownify_extra.php'; // HTML -> markdown extra - uses markdownify
 
-$site->cachefile = 'cache/'.str_replace("/","-",substr($site->query, 1, -1)).'.html';
-if($site->cachefile == "cache/.html"){
-  $site->cachefile = "cache/home.html";
+$site->cachefile = 'cache/'.str_replace('/','-',substr($site->query, 1, -1)).'.html';
+if($site->cachefile == 'cache/.html'){
+  $site->cachefile = 'cache/home.html';
 }
-if(isset($site->noindex) || isset($site->category) && $site->category || isset($site->tag) && $site->tag){
-  $cachetime = 60 * 60;  //  1 Hour Cache
-}
+
+$cacheChk = 0;
 
 if(isset($site->slug[1]) && file_exists('categories/'.$site->slug[0].'/'.$site->slug[1]."/post.".$site->ext)){
-  $file = 'categories/'.$site->slug[0].'/'.$site->slug[1]."/post.".$site->ext;
-}elseif(file_exists("categories/pages/".$site->slug[0]."/post.".$site->ext)){
-  $file = "categories/pages/".$site->slug[0]."/post.".$site->ext;
-}elseif(is_dir("categories/".$site->slug[0])){
-  $file = "categories/".$site->slug[0];
+  $file = 'categories/'.$site->slug[0].'/'.$site->slug[1].'/post.'.$site->ext;
+}elseif(file_exists('categories/pages/'.$site->slug[0].'/post.'.$site->ext)){
+  $file = 'categories/pages/'.$site->slug[0].'/post.'.$site->ext;
+}elseif(is_dir('categories/'.$site->slug[0])){
+  $file = 'categories/'.$site->slug[0];
+  $cacheChk = 1;
+}
+
+if(isset($site->noindex)){
+  $cacheChk = 1;
+}
+
+//if(isset($site->noindex) || isset($site->category) && $site->category || isset($site->tag) && $site->tag || $cacheChk){
+if($cacheChk){
+  $cachetime = 60 * 60;  //  1 Hour Cache
 }
 // Serve from the cache if it is younger than $cachetime, and a newer version of the page doesn't exist
-if ($site->cache->active && file_exists($site->cachefile) && filemtime($file) < @filemtime($site->cachefile) && $site->cache->active && !isset($_POST["important-input"]) || isset($cachetime) && time() - $cachetime < @filemtime($site->cachefile)) {
+if (
+  !isset($cachetime)
+  &&
+  $site->cache->active
+  &&
+  file_exists($site->cachefile)
+  &&
+  (filemtime($file) - @filemtime($site->cachefile)) <= 0
+  &&
+  !isset($_POST['important-input'])
+  ||
+  isset($cachetime)
+  &&
+  (time() - @filemtime($site->cachefile)) <= $cachetime
+  ) {
     include($site->cachefile);
-    echo "<!-- Cached copy, generated ".date('r', filemtime($site->cachefile))." by Wee_ CMS -->\n";
+    echo '<!-- Cached copy, generated '.date('r', filemtime($site->cachefile)).' by Wee_ CMS -->';
     exit;
 }
 
@@ -44,8 +68,22 @@ if($site->cache->active && !isset($site->error) && !isset($_POST['important-inpu
 }
 
 if(isset($page->noindex)){
-  header("X-Robots-Tag: noindex", true);
-  header("HTTP/1.0 410 Gone");
+  header('X-Robots-Tag: noindex', true);
+  header('HTTP/1.0 410 Gone');
+}
+
+if($site->error){
+  if(!is_dir('cache/404')){
+    mkdir("cache/404", 0777);
+  }
+  session_start();
+  if(!isset($_SESSION['org_referer'])){
+      $_SESSION['org_referer'] = $_SERVER['HTTP_REFERER'];
+  }
+  $ourFileName = 'cache/404/'.str_replace('/','-',substr($site->query, 1, -1)).'.txt';
+  $ourFileHandle = fopen($ourFileName, 'w');// or die("can't open file");
+  fwrite($ourFileHandle, 'Referring URL: '.$_SESSION['org_referer']);
+  fclose($ourFileHandle);
 }
 
 include 'themes/'.$site->theme.'/header.php';
@@ -63,7 +101,7 @@ include 'themes/'.$site->theme.'/footer.php';
 if($site->cache->active && !isset($site->error) && !isset($_POST['important-input'])){
   $fp = fopen($site->cachefile, 'w');
   if($site->cache->compress && $site->cache->compress){
-    $pageContents = preg_replace( "/(?:(?<=\>)|(?<=\/\>))(\s+)(?=\<\/?)/","", ob_get_contents() );
+    $pageContents = preg_replace( '/(?:(?<=\>)|(?<=\/\>))(\s+)(?=\<\/?)/','', ob_get_contents() );
   } else {
     $pageContents = ob_get_contents();
   }

@@ -1,4 +1,4 @@
 <article class="[[slug]]">
-  [[content]]
+  <!--[content]-->
   <aside><!--[timestamp]-->[[tags]]</aside>
 </article>

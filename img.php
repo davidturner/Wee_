@@ -6,7 +6,7 @@
                 Homepage: http://adaptive-images.com
                 GitHub:   https://github.com/MattWilcox/Adaptive-Images
                 Twitter:  @responsiveimg
-                
+
                 LEGAL:
                 Adaptive Images by Matt Wilcox is licensed under a Creative Commons Attribution 3.0 Unported License.
 
@@ -32,13 +32,15 @@ if(file_exists($document_root.'/categories'.$requested_uri)){
   $source_file  = $document_root.'/categories'.$requested_uri;
 } elseif (file_exists($document_root.'/categories/pages'.$requested_uri)) {
   $source_file  = $document_root.'/categories/pages'.$requested_uri;
+} elseif(file_exists($document_root.'/assets/default/'.$requested_uri)) {
+  $source_file  = $document_root.'/assets/default/'.$requested_uri;
 } else {
   $source_file  = $document_root.$requested_uri;
 }
 
 $resolution     = FALSE;
 
-/* Browser engine detect 
+/* Browser engine detect
    NOTE: only required to work around a bug where some browsers can't set the cookie fast enough on the first visit to the
          website. Such browsers therefor act as though no cookie was set on the very first visit. This means we can't
          allow desktop browsers to have $mobile_first = TRUE (which we don't want anyway) */
@@ -171,7 +173,7 @@ function generateImage($source_file, $cache_file, $resolution) {
   $cache_dir = dirname($cache_file);
 
   // does the directory exist already?
-  if (!is_dir($cache_dir)) { 
+  if (!is_dir($cache_dir)) {
     if (!mkdir($cache_dir, 0777, true)) {
       // check again if it really doesn't exist to protect against race conditions
       if (!is_dir($cache_dir)) {
