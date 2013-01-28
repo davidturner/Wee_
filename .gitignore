@@ -32,3 +32,17 @@
 ehthumbs.db
 Icon?
 Thumbs.db
+
+# Thumbnails
+._*
+
+# Sublime SFTP Plugin
+sftp-config.json
+
+# Compass
+.sass-cache
+
+# Project Stuff
+themes/*.css
+-ignore
+-old
